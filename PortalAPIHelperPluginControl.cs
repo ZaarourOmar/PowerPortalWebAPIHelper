@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms; 
+using System.Windows.Forms;
 using XrmToolBox.Extensibility;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
@@ -48,7 +48,7 @@ namespace PowerPortalWebAPIHelper
         {
             CloseTool();
         }
-      
+
         /// <summary>
         /// This event occurs when the plugin is closed
         /// </summary>
@@ -76,10 +76,11 @@ namespace PowerPortalWebAPIHelper
 
         private void LoadAllEntities_Click(object sender, EventArgs e)
         {
-            ExecuteMethod(GetEntities);
+            ExecuteMethod(LoadAllEntities);
+           
         }
 
-        public void GetEntities()
+        private void LoadAllEntities()
         {
             WorkAsync(new WorkAsyncInfo
             {
@@ -105,25 +106,34 @@ namespace PowerPortalWebAPIHelper
                     var result = args.Result as EntityMetadata[];
                     if (result != null)
                     {
-                        foreach(EntityMetadata emd in result)
+                        foreach (EntityMetadata emd in result)
                         {
-                            EntityListItem item = new EntityListItem(emd);
+                            EntityItemModel item = new EntityItemModel(emd);
 
                             if (IsConfigurationEntity(item.LogicalName)) continue;
 
-                            AllEntitiesList.Items.Add(item);
+                            AllEntitiesList.Add(item);
+                            AllEntitiesListBox.Items.Add(item);
                         }
 
-                        //sort the list, will find a better way later
-                        var list = AllEntitiesList.Items.Cast<EntityListItem>().OrderBy(item => item.DisplayName).ToList();
-                        AllEntitiesList.Items.Clear();
-                        foreach (EntityListItem listItem in list)
-                        {
-                            AllEntitiesList.Items.Add(listItem);
-                        }
+                        SortListBox<EntityItemModel>(AllEntitiesListBox);
+
                     }
                 }
             });
+        }
+
+        public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
+
+        private void SortListBox<T>(ListBox listBox)
+        {
+            //sort the list, will find a better way later
+            var list = listBox.Items.Cast<T>().OrderBy(item => item.ToString()).ToList();
+            listBox.Items.Clear();
+            foreach (T listItem in list)
+            {
+                listBox.Items.Add(listItem);
+            }
         }
 
         /// <summary>
@@ -136,12 +146,18 @@ namespace PowerPortalWebAPIHelper
             return logicalName.StartsWith("adx_");
         }
 
-        private void AllEntitiesList_Click(object sender, EventArgs e)
+
+        private void AllEntitiesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EntityListItem clickedEntity = (sender as ListBox).SelectedItem as EntityListItem;
-            if (clickedEntity!=null && clickedEntity.IsValid())
+
+            // Clear previous lists
+            EntityAttributesList.Items.Clear();
+
+            EntityItemModel clickedEntity = (sender as ListBox).SelectedItem as EntityItemModel;
+            if (clickedEntity != null && clickedEntity.IsValid())
             {
-                ExecuteMethod(GetSelectedEntityFields, clickedEntity.LogicalName);
+                ExecuteMethod(LoadSelectedEntityAttributes, clickedEntity.LogicalName);
+                SelectedEntityLogicalName = clickedEntity.LogicalName;
                 lblEntityLogicalName.Text = $"Entity Logical Name: {clickedEntity.LogicalName}";
                 lblEntityDisplayName.Text = $"Entity Dsplay Name: {clickedEntity.DisplayName}";
                 EntityInformationContainer.Visible = true;
@@ -152,13 +168,11 @@ namespace PowerPortalWebAPIHelper
             }
         }
 
-
-
-        private void GetSelectedEntityFields(string logicalName)
+        private void LoadSelectedEntityAttributes(string logicalName)
         {
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Getting entity fields",
+                Message = "Getting entity attributes",
                 Work = (worker, args) =>
                 {
 
@@ -170,7 +184,8 @@ namespace PowerPortalWebAPIHelper
 
                     foreach (var attribute in response.EntityMetadata.Attributes)
                     {
-                        EntityFieldsList.Items.Add(new FieldListItem(attribute));
+                        if (!string.IsNullOrEmpty(attribute.AttributeOf)) continue; // we don't want calculated fields.
+                        EntityAttributesList.Items.Add(new AttributeItemModel(attribute));
                     }
 
 
@@ -182,108 +197,102 @@ namespace PowerPortalWebAPIHelper
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    ExecuteMethod(ShowEntityWebAPIInformation, logicalName);
-
-
+                    ExecuteMethod(LoadEntityWebAPISettings, logicalName);
                 }
             });
         }
 
 
-        private void ShowEntityWebAPIInformation(string logicalName)
+        private void LoadEntityWebAPISettings(string logicalName)
         {
-            try
+
+            WorkAsync(new WorkAsyncInfo
             {
-
-
-                WorkAsync(new WorkAsyncInfo
+                Message = "Getting site settings for the selected entity",
+                Work = (worker, args) =>
                 {
-                    Message = "Getting site settings",
-                    Work = (worker, args) =>
+
+                    // Get sitesettings for this entity that are related to the web api setup
+                    QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
+                    siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
+                    FilterExpression webApiFilter = new FilterExpression(LogicalOperator.Or);
+                    webApiFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/{logicalName}/");
+                    webApiFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/error/innererror");
+                    siteSettingsQuery.Criteria.AddFilter(webApiFilter);
+
+                    //retreive the settings based on the above query
+                    var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
+                    var innerErrorSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/error/innererror");
+                    var enabledSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/enabled");
+                    var fieldsSiteSettingsEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/fields");
+
+                    // the inner error setting is general setting and not related to specific entity
+                    InitializeInnerErrorSwitch(innerErrorSiteSettingEntity);
+
+                    ChkBxIsWebAPIEnabled.Checked = false;
+                    if (enabledSiteSettingEntity != null)
                     {
-
-                        // Get sitesettings for this entity
-                        QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
-                        siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
-
-                        FilterExpression webApiFilter = new FilterExpression(LogicalOperator.Or);
-                        webApiFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/{logicalName}/");
-                        webApiFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/error/innererror");
-
-                        siteSettingsQuery.Criteria.AddFilter(webApiFilter);                      
-                        
-                        var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
-
-                        // set the settings to the checkboxes
-                        var innerErrorSiteSetting = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/error/innererror");
-                        var enabledSiteSetting = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/enabled");
-                        var fieldsSiteSettings = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/fields");
-
-                        InitializeInnerErrorSwitch(innerErrorSiteSetting);
-                        if (enabledSiteSetting != null)
+                        SelectedEntityEnabledSiteSettingsId = enabledSiteSettingEntity.Id;
+                        if (enabledSiteSettingEntity.GetAttributeValue<string>("adx_value").ToLower() == "true")
                         {
-                            if (enabledSiteSetting.GetAttributeValue<string>("adx_value").ToLower() == "true")
-                            {
-                                ChkBxIsWebAPIEnabled.Checked = true;
-                            }
-                            else
-                            {
-                                ChkBxIsWebAPIEnabled.Checked = false;
-                            }
+                            ChkBxIsWebAPIEnabled.Checked = true;
                         }
-
-                        if (fieldsSiteSettings != null)
+                        else
                         {
-                            var fieldsString = fieldsSiteSettings.GetAttributeValue<string>("adx_value");
-                            if (string.IsNullOrEmpty(fieldsString)) return;
-
-
-                            // if the value is star, all fields are selecteed
-                            if (fieldsString == "*")
-                            {
-                                for (int i = 0; i < EntityFieldsList.Items.Count; i++)
-                                {
-                                    EntityFieldsList.SetItemChecked(i, true);
-                                }
-                            }
-
-                            var fieldsArray = fieldsString.Split(',');
-                            for (int i = 0; i < EntityFieldsList.Items.Count; i++) {
-                                var found = fieldsArray.FirstOrDefault(x => x == ((FieldListItem)EntityFieldsList.Items[i]).LogicalName);
-                                if (found != null)
-                                {
-                                    EntityFieldsList.SetItemChecked(i, true);
-                                }
-                            }
-                            
+                            ChkBxIsWebAPIEnabled.Checked = false;
                         }
-
-
-                    },
-                    PostWorkCallBack = (args) =>
-                    {
-                        if (args.Error != null)
-                        {
-                            MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                       
                     }
-                });
 
-              
+                    if (fieldsSiteSettingsEntity != null)
+                    {
+                        SelectedEntityFieldsSiteSettingsId = fieldsSiteSettingsEntity.Id;
+                        var fieldsString = fieldsSiteSettingsEntity.GetAttributeValue<string>("adx_value");
+                        if (string.IsNullOrEmpty(fieldsString)) return;
 
-              
-            }
 
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+                        // if the value is star, all fields are selecteed
+                        if (fieldsString == "*")
+                        {
+                            AllAttributesSelected = true;
+                            for (int i = 0; i < EntityAttributesList.Items.Count; i++)
+                            {
+                                EntityAttributesList.SetItemChecked(i, true);
+                            }
+                        }
+
+                        var fieldsArray = fieldsString.Split(',');
+                        for (int i = 0; i < EntityAttributesList.Items.Count; i++)
+                        {
+                            var found = fieldsArray.FirstOrDefault(x => x == ((AttributeItemModel)EntityAttributesList.Items[i]).LogicalName);
+                            if (found != null)
+                            {
+                                EntityAttributesList.SetItemChecked(i, true);
+                            }
+                        }
+
+                    }
+
+
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                }
+            });
+
         }
 
 
         public bool InternalErrorEnabled { get; set; }
-        public Guid InternalErrorSiteSettingsId { get; set; }
+        public string SelectedEntityLogicalName { get; set; }
+        public Guid InnerErrorSiteSettingsId { get; set; }
+        public Guid SelectedEntityEnabledSiteSettingsId { get; set; }
+        public Guid SelectedEntityFieldsSiteSettingsId { get; set; }
+        public bool AllAttributesSelected { get; set; } = false;
         private void InitializeInnerErrorSwitch(Entity innerErrorSiteSetting)
         {
             tsbSwitchInnerError.Visible = true;
@@ -292,10 +301,10 @@ namespace PowerPortalWebAPIHelper
             {
                 tsbSwitchInnerError.Text = "Enable Inner Error Tracking";
                 InternalErrorEnabled = false;
-                InternalErrorSiteSettingsId = Guid.Empty;
+                InnerErrorSiteSettingsId = Guid.Empty;
                 return;
             }
-            bool isInternalErrorEnabled= innerErrorSiteSetting.GetAttributeValue<string>("adx_value").ToLower()=="true";
+            bool isInternalErrorEnabled = innerErrorSiteSetting.GetAttributeValue<string>("adx_value").ToLower() == "true";
             if (isInternalErrorEnabled)
             {
                 tsbSwitchInnerError.Text = "Disable Inner Error Tracking";
@@ -306,12 +315,12 @@ namespace PowerPortalWebAPIHelper
                 tsbSwitchInnerError.Text = "Enable Inner Error Tracking";
                 InternalErrorEnabled = false;
             }
-            InternalErrorSiteSettingsId = innerErrorSiteSetting.Id ;
+            InnerErrorSiteSettingsId = innerErrorSiteSetting.Id;
         }
 
         private void tsbSwitchInnerError_Click(object sender, EventArgs e)
         {
-            if (InternalErrorSiteSettingsId != Guid.Empty)
+            if (InnerErrorSiteSettingsId != Guid.Empty)
             {
 
                 WorkAsync(new WorkAsyncInfo
@@ -319,7 +328,7 @@ namespace PowerPortalWebAPIHelper
                     Message = $"Switching Inner Error Tracking to {!InternalErrorEnabled}",
                     Work = (worker, args) =>
                     {
-                        Entity internalErrorSitesettingsEntity = new Entity("adx_sitesetting", InternalErrorSiteSettingsId);
+                        Entity internalErrorSitesettingsEntity = new Entity("adx_sitesetting", InnerErrorSiteSettingsId);
                         internalErrorSitesettingsEntity.Attributes["adx_name"] = "Webapi/error/innererror";
                         internalErrorSitesettingsEntity.Attributes["adx_value"] = InternalErrorEnabled ? "false" : "true";
                         Service.Update(internalErrorSitesettingsEntity);
@@ -337,7 +346,7 @@ namespace PowerPortalWebAPIHelper
 
                     }
                 });
-              
+
             }
             else
             {
@@ -349,7 +358,7 @@ namespace PowerPortalWebAPIHelper
                         Entity internalErrorSitesettingsEntity = new Entity("adx_sitesetting");
                         internalErrorSitesettingsEntity.Attributes["adx_name"] = "Webapi/error/innererror";
                         internalErrorSitesettingsEntity.Attributes["adx_value"] = "true";
-                        InternalErrorSiteSettingsId= Service.Create(internalErrorSitesettingsEntity);
+                        InnerErrorSiteSettingsId = Service.Create(internalErrorSitesettingsEntity);
 
 
                     },
@@ -366,11 +375,159 @@ namespace PowerPortalWebAPIHelper
                     }
                 });
 
-               
+
             }
 
 
 
         }
+
+        private void tsbSaveChanges_Click(object sender, EventArgs e)
+        {
+            bool isEnabled = ChkBxIsWebAPIEnabled.Checked;
+            if (SelectedEntityEnabledSiteSettingsId == Guid.Empty)
+            {
+                CreateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityLogicalName, isEnabled.ToString().ToLower());
+            }
+            else
+            {
+                UpdateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityEnabledSiteSettingsId, SelectedEntityLogicalName, isEnabled.ToString().ToLower());
+            }
+
+
+            // get the fields setting value;
+            StringBuilder fieldsSettingValue =new StringBuilder();
+            // if all are selected, set the setting value to "*"
+            if (EntityAttributesList.CheckedItems.Count == EntityAttributesList.Items.Count)
+            {
+                fieldsSettingValue.Append("*");
+            }
+            else
+            {
+                foreach(AttributeItemModel checkedItemModel in EntityAttributesList.CheckedItems)
+                {
+                    fieldsSettingValue.Append(checkedItemModel.LogicalName);
+                    fieldsSettingValue.Append(",");
+                }
+                if (SelectedEntityFieldsSiteSettingsId == Guid.Empty)
+                {
+                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityLogicalName, fieldsSettingValue.ToString().ToLower());
+                }
+                else
+                {
+                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityFieldsSiteSettingsId, SelectedEntityLogicalName, fieldsSettingValue.ToString().ToLower());
+                }
+            }
+        }
+
+
+        private void CreateSiteSetting(WebAPISiteSettingTypes settingType, string entityLogicalName, string value)
+        {
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Creating site setting",
+                Work = (worker, args) =>
+                {
+                    Entity settingEntity = new Entity("adx_sitesetting");
+                    switch (settingType)
+                    {
+                        case WebAPISiteSettingTypes.EnabledSetting:
+                            settingEntity.Attributes["adx_name"] = $"Webapi/{entityLogicalName}/enabled";
+                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            SelectedEntityEnabledSiteSettingsId = Service.Create(settingEntity);
+                            break;
+
+                        case WebAPISiteSettingTypes.FieldsSetting:
+                            settingEntity.Attributes["adx_name"] = $"Webapi/{entityLogicalName}/fields";
+                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            SelectedEntityEnabledSiteSettingsId = Service.Create(settingEntity);
+                            break;
+
+
+                        case WebAPISiteSettingTypes.InnerError:
+                            settingEntity.Attributes["adx_name"] = $"Webapi/error/innererror";
+                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            InnerErrorSiteSettingsId = Service.Create(settingEntity);
+                            break;
+                    }
+
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                }
+            });
+
+        }
+
+
+
+        private void UpdateSiteSetting(WebAPISiteSettingTypes settingType, Guid settingId, string entityLogicalName, string value)
+        {
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Updating site setting",
+                Work = (worker, args) =>
+                {
+                    Entity settingEntity = new Entity("adx_sitesetting", settingId);
+                    switch (settingType)
+                    {
+                        case WebAPISiteSettingTypes.EnabledSetting:
+                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            Service.Update(settingEntity);
+                            break;
+
+                        case WebAPISiteSettingTypes.FieldsSetting:
+                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            Service.Update(settingEntity);
+                            break;
+
+                        case WebAPISiteSettingTypes.InnerError:
+                            settingEntity.Attributes["adx_name"] = $"Webapi/error/innererror";
+                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            Service.Update(settingEntity);
+                            break;
+                    }
+
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                }
+            });
+
+        }
+
+        private void txtAllEntitiesFilter_TextChanged(object sender, EventArgs e)
+        {
+            var itemList = AllEntitiesList.Cast<EntityItemModel>().ToList();
+            if (itemList.Count > 0)
+            {
+                //clear the items from the list
+                AllEntitiesListBox.Items.Clear();
+
+                //filter the items and add them to the list
+                AllEntitiesListBox.Items.AddRange(
+                    itemList.Where(i => i.DisplayName.ToLower().Contains(txtAllEntitiesFilter.Text.ToLower())).ToArray());
+            }
+            else
+            {
+                AllEntitiesListBox.Items.AddRange(itemList.ToArray());
+            }
+        }
+
+        
     }
+
+    public enum WebAPISiteSettingTypes { EnabledSetting, FieldsSetting, InnerError }
 }

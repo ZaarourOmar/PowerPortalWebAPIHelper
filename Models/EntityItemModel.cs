@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace PowerPortalWebAPIHelper.Models
 {
-    public class EntityListItem
+    public class EntityItemModel
     {
-        public EntityListItem(EntityMetadata metadata)
+        public EntityItemModel(EntityMetadata metadata)
         {
             if(metadata.DisplayName.UserLocalizedLabel!=null && !string.IsNullOrEmpty(metadata.DisplayName.UserLocalizedLabel.Label))
             {
