@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\EntityListItem.cs" />
+    <Compile Include="Models\FieldListItem.cs" />
     <Compile Include="PortalAPIHelperPlugin.cs" />
     <Compile Include="PortalAPIHelperPluginControl.cs">
       <SubType>UserControl</SubType>

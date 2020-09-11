@@ -7,30 +7,30 @@ using System.Threading.Tasks;
 
 namespace PowerPortalWebAPIHelper.Models
 {
-    public class EntityListItem
+    public class FieldListItem
     {
-        public EntityListItem(EntityMetadata metadata)
+        public FieldListItem(AttributeMetadata metadata)
         {
-            if(metadata.DisplayName.UserLocalizedLabel!=null && !string.IsNullOrEmpty(metadata.DisplayName.UserLocalizedLabel.Label))
+            if (metadata.DisplayName.UserLocalizedLabel != null && !string.IsNullOrEmpty(metadata.DisplayName.UserLocalizedLabel.Label))
             {
-                DisplayName = metadata.DisplayName.UserLocalizedLabel.Label;
+                Label = metadata.DisplayName.UserLocalizedLabel.Label;
             }
             else
             {
-                DisplayName = metadata.DisplayName.ToString();
+                Label = metadata.DisplayName.ToString();
             }
 
             LogicalName = metadata.LogicalName;
         }
-        public string DisplayName { get; set; }
+        public string Label { get; set; }
         public string LogicalName { get; set; }
 
         public override string ToString()
         {
-            return $"{DisplayName} ({LogicalName})";
+            return $"{Label} ({LogicalName})";
         }
 
-        public  bool IsValid()
+        public bool IsValid()
         {
             return !string.IsNullOrEmpty(LogicalName);
         }
