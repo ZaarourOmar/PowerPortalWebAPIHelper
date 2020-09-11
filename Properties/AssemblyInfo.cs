@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PowerPortalWebAPIHelper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Enable/disable Entities for Web API and Generate Code Snippets")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Transform365 Business Solutions Inc")]
 [assembly: AssemblyProduct("PowerPortalWebAPIHelper")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
