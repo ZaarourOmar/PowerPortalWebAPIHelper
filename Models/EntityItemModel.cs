@@ -30,9 +30,5 @@ namespace PowerPortalWebAPIHelper.Models
             return $"{DisplayName} ({LogicalName})";
         }
 
-        public  bool IsValid()
-        {
-            return !string.IsNullOrEmpty(LogicalName);
-        }
     }
 }

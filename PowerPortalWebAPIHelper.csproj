@@ -132,8 +132,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeValidator.cs" />
+    <Compile Include="Models\EntityInfo.cs" />
     <Compile Include="Models\EntityItemModel.cs" />
     <Compile Include="Models\AttributeItemModel.cs" />
+    <Compile Include="Models\SiteSettings.cs" />
+    <Compile Include="Models\WebsiteModel.cs" />
     <Compile Include="PortalAPIHelperPlugin.cs" />
     <Compile Include="PortalAPIHelperPluginControl.cs">
       <SubType>UserControl</SubType>
