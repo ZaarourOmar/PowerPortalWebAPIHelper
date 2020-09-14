@@ -132,7 +132,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeValidator.cs" />
+    <Compile Include="MetadataValidator.cs" />
     <Compile Include="Models\EntityInfo.cs" />
     <Compile Include="Models\EntityItemModel.cs" />
     <Compile Include="Models\AttributeItemModel.cs" />
@@ -152,6 +152,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="SnippetsGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -165,6 +166,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icons\toolbox_32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\toolbox_80.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

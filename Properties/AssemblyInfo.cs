@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Enable/disable Entities for Web API and Generate Code Snippets")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Transform365 Business Solutions Inc")]
-[assembly: AssemblyProduct("PowerPortalWebAPIHelper")]
+[assembly: AssemblyProduct("Power Portal WebAPI Helper")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

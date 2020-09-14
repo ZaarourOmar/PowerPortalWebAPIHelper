@@ -33,8 +33,9 @@
             this.tsbClose = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbLoadEntities = new System.Windows.Forms.ToolStripButton();
-            this.tsbSaveChanges = new System.Windows.Forms.ToolStripButton();
             this.tsbSwitchInnerError = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbWebsiteList = new System.Windows.Forms.ToolStripComboBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,6 +44,7 @@
             this.EntityInformationContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnSaveEntityChanges = new System.Windows.Forms.Button();
             this.lblEntityDisplayName = new System.Windows.Forms.Label();
             this.chkBxIsWebAPIEnabled = new System.Windows.Forms.CheckBox();
             this.lblEntityLogicalName = new System.Windows.Forms.Label();
@@ -52,8 +54,6 @@
             this.chkdLstBxAllAttibutes = new System.Windows.Forms.CheckedListBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.rchTxtBxSnippets = new System.Windows.Forms.RichTextBox();
-            this.tsbWebsiteList = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -86,7 +86,6 @@
             this.tsbClose,
             this.tssSeparator1,
             this.tsbLoadEntities,
-            this.tsbSaveChanges,
             this.tsbSwitchInnerError,
             this.toolStripSeparator1,
             this.tsbWebsiteList});
@@ -118,17 +117,6 @@
             this.tsbLoadEntities.Text = "Load Entities";
             this.tsbLoadEntities.Click += new System.EventHandler(this.LoadAllEntities_Click);
             // 
-            // tsbSaveChanges
-            // 
-            this.tsbSaveChanges.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbSaveChanges.Image = ((System.Drawing.Image)(resources.GetObject("tsbSaveChanges.Image")));
-            this.tsbSaveChanges.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbSaveChanges.Name = "tsbSaveChanges";
-            this.tsbSaveChanges.Size = new System.Drawing.Size(84, 22);
-            this.tsbSaveChanges.Text = "Save Changes";
-            this.tsbSaveChanges.Visible = false;
-            this.tsbSaveChanges.Click += new System.EventHandler(this.tsbSaveChanges_Click);
-            // 
             // tsbSwitchInnerError
             // 
             this.tsbSwitchInnerError.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -140,6 +128,18 @@
             this.tsbSwitchInnerError.Text = "Enable Inner Error Tracking";
             this.tsbSwitchInnerError.Visible = false;
             this.tsbSwitchInnerError.Click += new System.EventHandler(this.tsbSwitchInnerError_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbWebsiteList
+            // 
+            this.tsbWebsiteList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.tsbWebsiteList.Name = "tsbWebsiteList";
+            this.tsbWebsiteList.Size = new System.Drawing.Size(200, 25);
+            this.tsbWebsiteList.SelectedIndexChanged += new System.EventHandler(this.tsbWebsiteList_SelectedIndexChanged);
             // 
             // splitContainer1
             // 
@@ -245,6 +245,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnSaveEntityChanges);
             this.groupBox1.Controls.Add(this.lblEntityDisplayName);
             this.groupBox1.Controls.Add(this.chkBxIsWebAPIEnabled);
             this.groupBox1.Controls.Add(this.lblEntityLogicalName);
@@ -255,6 +256,16 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entity Information";
+            // 
+            // btnSaveEntityChanges
+            // 
+            this.btnSaveEntityChanges.Location = new System.Drawing.Point(367, 23);
+            this.btnSaveEntityChanges.Name = "btnSaveEntityChanges";
+            this.btnSaveEntityChanges.Size = new System.Drawing.Size(131, 23);
+            this.btnSaveEntityChanges.TabIndex = 3;
+            this.btnSaveEntityChanges.Text = "Save Entity Changes";
+            this.btnSaveEntityChanges.UseVisualStyleBackColor = true;
+            this.btnSaveEntityChanges.Click += new System.EventHandler(this.btnSaveEntityChanges_Click);
             // 
             // lblEntityDisplayName
             // 
@@ -357,18 +368,6 @@
             this.rchTxtBxSnippets.TabIndex = 0;
             this.rchTxtBxSnippets.Text = "";
             // 
-            // tsbWebsiteList
-            // 
-            this.tsbWebsiteList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.tsbWebsiteList.Name = "tsbWebsiteList";
-            this.tsbWebsiteList.Size = new System.Drawing.Size(200, 25);
-            this.tsbWebsiteList.SelectedIndexChanged += new System.EventHandler(this.tsbWebsiteList_SelectedIndexChanged);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // PortalAPIHelperPluginControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -377,7 +376,7 @@
             this.Controls.Add(this.toolStripMenu);
             this.Name = "PortalAPIHelperPluginControl";
             this.Size = new System.Drawing.Size(1226, 523);
-            this.Load += new System.EventHandler(this.MyPluginControl_Load);
+            this.Load += new System.EventHandler(this.PortalAPIHelperPluginControl_Load);
             this.toolStripMenu.ResumeLayout(false);
             this.toolStripMenu.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -425,7 +424,6 @@
         private System.Windows.Forms.CheckBox chkBxIsWebAPIEnabled;
         private System.Windows.Forms.RichTextBox rchTxtBxSnippets;
         private System.Windows.Forms.CheckedListBox chkdLstBxAllAttibutes;
-        private System.Windows.Forms.ToolStripButton tsbSaveChanges;
         private System.Windows.Forms.Label lblEntityDisplayName;
         private System.Windows.Forms.Label lblEntityLogicalName;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -436,5 +434,6 @@
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.ToolStripComboBox tsbWebsiteList;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.Button btnSaveEntityChanges;
     }
 }
