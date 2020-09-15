@@ -44,6 +44,7 @@
             this.EntityInformationContainer = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnGenerateSnippets = new System.Windows.Forms.Button();
             this.btnSaveEntityChanges = new System.Windows.Forms.Button();
             this.lblEntityDisplayName = new System.Windows.Forms.Label();
             this.chkBxIsWebAPIEnabled = new System.Windows.Forms.CheckBox();
@@ -53,7 +54,13 @@
             this.txtAttributeFilter = new System.Windows.Forms.TextBox();
             this.chkdLstBxAllAttibutes = new System.Windows.Forms.CheckedListBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rchTxtBxSnippets = new System.Windows.Forms.RichTextBox();
+            this.rchTxtBxDelete = new System.Windows.Forms.TabControl();
+            this.tabWrapperFunction = new System.Windows.Forms.TabPage();
+            this.rchTxtBxWrapperFunction = new System.Windows.Forms.RichTextBox();
+            this.tabCreate = new System.Windows.Forms.TabPage();
+            this.rchTxtBxCreate = new System.Windows.Forms.RichTextBox();
+            this.tabDelete = new System.Windows.Forms.TabPage();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -77,6 +84,10 @@
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.rchTxtBxDelete.SuspendLayout();
+            this.tabWrapperFunction.SuspendLayout();
+            this.tabCreate.SuspendLayout();
+            this.tabDelete.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -245,6 +256,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnGenerateSnippets);
             this.groupBox1.Controls.Add(this.btnSaveEntityChanges);
             this.groupBox1.Controls.Add(this.lblEntityDisplayName);
             this.groupBox1.Controls.Add(this.chkBxIsWebAPIEnabled);
@@ -256,6 +268,16 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entity Information";
+            // 
+            // btnGenerateSnippets
+            // 
+            this.btnGenerateSnippets.Location = new System.Drawing.Point(367, 56);
+            this.btnGenerateSnippets.Name = "btnGenerateSnippets";
+            this.btnGenerateSnippets.Size = new System.Drawing.Size(131, 23);
+            this.btnGenerateSnippets.TabIndex = 4;
+            this.btnGenerateSnippets.Text = "Generate Snippets";
+            this.btnGenerateSnippets.UseVisualStyleBackColor = true;
+            this.btnGenerateSnippets.Click += new System.EventHandler(this.btnGenerateSnippets_Click);
             // 
             // btnSaveEntityChanges
             // 
@@ -350,7 +372,7 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.rchTxtBxSnippets);
+            this.groupBox3.Controls.Add(this.rchTxtBxDelete);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(0, 0);
             this.groupBox3.Name = "groupBox3";
@@ -359,14 +381,80 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Code Snippets";
             // 
-            // rchTxtBxSnippets
+            // rchTxtBxDelete
             // 
-            this.rchTxtBxSnippets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBxSnippets.Location = new System.Drawing.Point(3, 16);
-            this.rchTxtBxSnippets.Name = "rchTxtBxSnippets";
-            this.rchTxtBxSnippets.Size = new System.Drawing.Size(489, 479);
-            this.rchTxtBxSnippets.TabIndex = 0;
-            this.rchTxtBxSnippets.Text = "";
+            this.rchTxtBxDelete.Controls.Add(this.tabWrapperFunction);
+            this.rchTxtBxDelete.Controls.Add(this.tabCreate);
+            this.rchTxtBxDelete.Controls.Add(this.tabDelete);
+            this.rchTxtBxDelete.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxDelete.Location = new System.Drawing.Point(3, 16);
+            this.rchTxtBxDelete.Name = "rchTxtBxDelete";
+            this.rchTxtBxDelete.SelectedIndex = 0;
+            this.rchTxtBxDelete.Size = new System.Drawing.Size(489, 479);
+            this.rchTxtBxDelete.TabIndex = 1;
+            // 
+            // tabWrapperFunction
+            // 
+            this.tabWrapperFunction.Controls.Add(this.rchTxtBxWrapperFunction);
+            this.tabWrapperFunction.Location = new System.Drawing.Point(4, 22);
+            this.tabWrapperFunction.Name = "tabWrapperFunction";
+            this.tabWrapperFunction.Padding = new System.Windows.Forms.Padding(3);
+            this.tabWrapperFunction.Size = new System.Drawing.Size(481, 453);
+            this.tabWrapperFunction.TabIndex = 0;
+            this.tabWrapperFunction.Text = "Wrapper Function";
+            this.tabWrapperFunction.UseVisualStyleBackColor = true;
+            // 
+            // rchTxtBxWrapperFunction
+            // 
+            this.rchTxtBxWrapperFunction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxWrapperFunction.Enabled = false;
+            this.rchTxtBxWrapperFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxWrapperFunction.Location = new System.Drawing.Point(3, 3);
+            this.rchTxtBxWrapperFunction.Name = "rchTxtBxWrapperFunction";
+            this.rchTxtBxWrapperFunction.Size = new System.Drawing.Size(475, 447);
+            this.rchTxtBxWrapperFunction.TabIndex = 0;
+            this.rchTxtBxWrapperFunction.Text = "";
+            // 
+            // tabCreate
+            // 
+            this.tabCreate.Controls.Add(this.rchTxtBxCreate);
+            this.tabCreate.Location = new System.Drawing.Point(4, 22);
+            this.tabCreate.Name = "tabCreate";
+            this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
+            this.tabCreate.Size = new System.Drawing.Size(481, 453);
+            this.tabCreate.TabIndex = 1;
+            this.tabCreate.Text = "Create";
+            this.tabCreate.UseVisualStyleBackColor = true;
+            // 
+            // rchTxtBxCreate
+            // 
+            this.rchTxtBxCreate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxCreate.Enabled = false;
+            this.rchTxtBxCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxCreate.Location = new System.Drawing.Point(3, 3);
+            this.rchTxtBxCreate.Name = "rchTxtBxCreate";
+            this.rchTxtBxCreate.Size = new System.Drawing.Size(475, 447);
+            this.rchTxtBxCreate.TabIndex = 1;
+            this.rchTxtBxCreate.Text = "SomeText";
+            // 
+            // tabDelete
+            // 
+            this.tabDelete.Controls.Add(this.richTextBox1);
+            this.tabDelete.Location = new System.Drawing.Point(4, 22);
+            this.tabDelete.Name = "tabDelete";
+            this.tabDelete.Size = new System.Drawing.Size(481, 453);
+            this.tabDelete.TabIndex = 2;
+            this.tabDelete.Text = "Delete";
+            this.tabDelete.UseVisualStyleBackColor = true;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(481, 453);
+            this.richTextBox1.TabIndex = 2;
+            this.richTextBox1.Text = "";
             // 
             // PortalAPIHelperPluginControl
             // 
@@ -404,6 +492,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.rchTxtBxDelete.ResumeLayout(false);
+            this.tabWrapperFunction.ResumeLayout(false);
+            this.tabCreate.ResumeLayout(false);
+            this.tabDelete.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -422,7 +514,7 @@
         private System.Windows.Forms.SplitContainer EntityInformationContainer;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.CheckBox chkBxIsWebAPIEnabled;
-        private System.Windows.Forms.RichTextBox rchTxtBxSnippets;
+        private System.Windows.Forms.RichTextBox rchTxtBxWrapperFunction;
         private System.Windows.Forms.CheckedListBox chkdLstBxAllAttibutes;
         private System.Windows.Forms.Label lblEntityDisplayName;
         private System.Windows.Forms.Label lblEntityLogicalName;
@@ -435,5 +527,12 @@
         private System.Windows.Forms.ToolStripComboBox tsbWebsiteList;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Button btnSaveEntityChanges;
+        private System.Windows.Forms.Button btnGenerateSnippets;
+        private System.Windows.Forms.TabControl rchTxtBxDelete;
+        private System.Windows.Forms.TabPage tabWrapperFunction;
+        private System.Windows.Forms.TabPage tabCreate;
+        private System.Windows.Forms.TabPage tabDelete;
+        private System.Windows.Forms.RichTextBox rchTxtBxCreate;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

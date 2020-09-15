@@ -26,7 +26,7 @@ namespace PowerPortalWebAPIHelper
 
         #region Variables
         private Settings mySettings;
-        private EntityInfo SelectedEntityInfo { get; set; } = new EntityInfo();
+        private EntityItemModel SelectedEntityInfo { get; set; } = new EntityItemModel();
         private List<WebsiteModel> Websites = new List<WebsiteModel>();
         public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
         public bool InnerErrorEnabled { get; set; } = false;
@@ -86,8 +86,6 @@ namespace PowerPortalWebAPIHelper
         public PortalAPIHelperPluginControl()
         {
             InitializeComponent();
-            SelectedEntityInfo = new EntityInfo();
-
         }
         #endregion
 
@@ -139,7 +137,7 @@ namespace PowerPortalWebAPIHelper
             // Clear previous attribute lists
             chkdLstBxAllAttibutes.Items.Clear();
             EntityInformationContainer.Visible = false;
-            SelectedEntityInfo = new EntityInfo();
+            SelectedEntityInfo = new EntityItemModel();
             //txtAllEntitiesFilter.Text = "";
             //txtAttributeFilter.Text = "";
         }
@@ -262,11 +260,10 @@ namespace PowerPortalWebAPIHelper
             EntityItemModel selectedEntity = lstBxAllEntities.SelectedItem as EntityItemModel;
             if (selectedEntity != null)
             {
-                SelectedEntityInfo.LogicalName = selectedEntity.LogicalName;
-                SelectedEntityInfo.DisplayName = selectedEntity.DisplayName;
+                SelectedEntityInfo = selectedEntity;
                 lblEntityLogicalName.Text = $"Entity Logical Name: {SelectedEntityInfo.LogicalName}";
                 lblEntityDisplayName.Text = $"Entity Dsplay Name: {SelectedEntityInfo.DisplayName}";
-                ExecuteMethod(LoadSelectedEntityAttributes, selectedEntity.LogicalName);
+                ExecuteMethod(LoadSelectedEntityAttributes, SelectedEntityInfo.LogicalName);
                 ShowEntityInformationPanel();
             }
 
@@ -391,7 +388,7 @@ namespace PowerPortalWebAPIHelper
 
 
         #endregion
-   
+
         #region Inner Error Management
 
         private void LoadInnerErrorTrackingSettings()
@@ -442,7 +439,24 @@ namespace PowerPortalWebAPIHelper
         }
         #endregion
 
+        #region Snippets Management
+        private void PopulateSnippets()
+        {
+            rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
 
+            Dictionary<string, string> sampleFields = new Dictionary<string, string>()
+            {
+                {
+                    "name","omar" 
+                },
+                {
+                    "age","25"
+                }
+            };
+            rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateFunction(SelectedEntityInfo.CollectionName, sampleFields);
+        }
+
+        #endregion
         #region Website Management
         private void LoadWebsites()
         {
@@ -636,9 +650,13 @@ namespace PowerPortalWebAPIHelper
 
         }
 
+
         #endregion
 
-       
+        private void btnGenerateSnippets_Click(object sender, EventArgs e)
+        {
+            PopulateSnippets();
+        }
     }
 
 }

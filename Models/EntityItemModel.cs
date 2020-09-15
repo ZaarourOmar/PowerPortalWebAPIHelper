@@ -9,6 +9,10 @@ namespace PowerPortalWebAPIHelper.Models
 {
     public class EntityItemModel
     {
+        public EntityItemModel()
+        {
+
+        }
         public EntityItemModel(EntityMetadata metadata)
         {
             if(metadata.DisplayName.UserLocalizedLabel!=null && !string.IsNullOrEmpty(metadata.DisplayName.UserLocalizedLabel.Label))
@@ -21,9 +25,19 @@ namespace PowerPortalWebAPIHelper.Models
             }
 
             LogicalName = metadata.LogicalName;
+
+            CollectionName = metadata.CollectionSchemaName;
         }
+
+        public string CollectionName { get; set; }
         public string DisplayName { get; set; }
         public string LogicalName { get; set; }
+
+        public Guid WebAPIEnabledSiteSettingId { get; set; }
+        public Guid WebAPIFieldsSiteSettingId { get; set; }
+
+        public List<AttributeItemModel> SelectedAttributesList { get; set; } = new List<AttributeItemModel>();
+        public List<AttributeItemModel> AllAttributesList { get; set; } = new List<AttributeItemModel>();
 
         public override string ToString()
         {

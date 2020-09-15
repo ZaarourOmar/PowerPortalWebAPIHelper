@@ -21,10 +21,14 @@ namespace PowerPortalWebAPIHelper.Models
             }
 
             LogicalName = metadata.LogicalName;
+
+            DataType = metadata.AttributeType.Value;
         }
         public string DisplayName { get; set; }
         public string LogicalName { get; set; }
 
+
+        public AttributeTypeCode DataType { get; set; }
         public override string ToString()
         {
             return $"{DisplayName} ({LogicalName})";
