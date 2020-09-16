@@ -54,13 +54,15 @@
             this.txtAttributeFilter = new System.Windows.Forms.TextBox();
             this.chkdLstBxAllAttibutes = new System.Windows.Forms.CheckedListBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rchTxtBxDelete = new System.Windows.Forms.TabControl();
+            this.tabControlSnippets = new System.Windows.Forms.TabControl();
             this.tabWrapperFunction = new System.Windows.Forms.TabPage();
             this.rchTxtBxWrapperFunction = new System.Windows.Forms.RichTextBox();
             this.tabCreate = new System.Windows.Forms.TabPage();
             this.rchTxtBxCreate = new System.Windows.Forms.RichTextBox();
+            this.tabUpdate = new System.Windows.Forms.TabPage();
+            this.rchTxtBxUpdate = new System.Windows.Forms.RichTextBox();
             this.tabDelete = new System.Windows.Forms.TabPage();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.rchTxtBxDelete = new System.Windows.Forms.RichTextBox();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -84,9 +86,10 @@
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.rchTxtBxDelete.SuspendLayout();
+            this.tabControlSnippets.SuspendLayout();
             this.tabWrapperFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
+            this.tabUpdate.SuspendLayout();
             this.tabDelete.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -372,7 +375,7 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.rchTxtBxDelete);
+            this.groupBox3.Controls.Add(this.tabControlSnippets);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(0, 0);
             this.groupBox3.Name = "groupBox3";
@@ -381,17 +384,18 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Code Snippets";
             // 
-            // rchTxtBxDelete
+            // tabControlSnippets
             // 
-            this.rchTxtBxDelete.Controls.Add(this.tabWrapperFunction);
-            this.rchTxtBxDelete.Controls.Add(this.tabCreate);
-            this.rchTxtBxDelete.Controls.Add(this.tabDelete);
-            this.rchTxtBxDelete.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBxDelete.Location = new System.Drawing.Point(3, 16);
-            this.rchTxtBxDelete.Name = "rchTxtBxDelete";
-            this.rchTxtBxDelete.SelectedIndex = 0;
-            this.rchTxtBxDelete.Size = new System.Drawing.Size(489, 479);
-            this.rchTxtBxDelete.TabIndex = 1;
+            this.tabControlSnippets.Controls.Add(this.tabWrapperFunction);
+            this.tabControlSnippets.Controls.Add(this.tabCreate);
+            this.tabControlSnippets.Controls.Add(this.tabUpdate);
+            this.tabControlSnippets.Controls.Add(this.tabDelete);
+            this.tabControlSnippets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControlSnippets.Location = new System.Drawing.Point(3, 16);
+            this.tabControlSnippets.Name = "tabControlSnippets";
+            this.tabControlSnippets.SelectedIndex = 0;
+            this.tabControlSnippets.Size = new System.Drawing.Size(489, 479);
+            this.tabControlSnippets.TabIndex = 1;
             // 
             // tabWrapperFunction
             // 
@@ -407,8 +411,7 @@
             // rchTxtBxWrapperFunction
             // 
             this.rchTxtBxWrapperFunction.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBxWrapperFunction.Enabled = false;
-            this.rchTxtBxWrapperFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxWrapperFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBxWrapperFunction.Location = new System.Drawing.Point(3, 3);
             this.rchTxtBxWrapperFunction.Name = "rchTxtBxWrapperFunction";
             this.rchTxtBxWrapperFunction.Size = new System.Drawing.Size(475, 447);
@@ -429,17 +432,37 @@
             // rchTxtBxCreate
             // 
             this.rchTxtBxCreate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBxCreate.Enabled = false;
-            this.rchTxtBxCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBxCreate.Location = new System.Drawing.Point(3, 3);
             this.rchTxtBxCreate.Name = "rchTxtBxCreate";
             this.rchTxtBxCreate.Size = new System.Drawing.Size(475, 447);
             this.rchTxtBxCreate.TabIndex = 1;
             this.rchTxtBxCreate.Text = "SomeText";
             // 
+            // tabUpdate
+            // 
+            this.tabUpdate.Controls.Add(this.rchTxtBxUpdate);
+            this.tabUpdate.Location = new System.Drawing.Point(4, 22);
+            this.tabUpdate.Name = "tabUpdate";
+            this.tabUpdate.Padding = new System.Windows.Forms.Padding(3);
+            this.tabUpdate.Size = new System.Drawing.Size(481, 453);
+            this.tabUpdate.TabIndex = 3;
+            this.tabUpdate.Text = "Update";
+            this.tabUpdate.UseVisualStyleBackColor = true;
+            // 
+            // rchTxtBxUpdate
+            // 
+            this.rchTxtBxUpdate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxUpdate.Location = new System.Drawing.Point(3, 3);
+            this.rchTxtBxUpdate.Name = "rchTxtBxUpdate";
+            this.rchTxtBxUpdate.Size = new System.Drawing.Size(475, 447);
+            this.rchTxtBxUpdate.TabIndex = 1;
+            this.rchTxtBxUpdate.Text = "";
+            // 
             // tabDelete
             // 
-            this.tabDelete.Controls.Add(this.richTextBox1);
+            this.tabDelete.Controls.Add(this.rchTxtBxDelete);
             this.tabDelete.Location = new System.Drawing.Point(4, 22);
             this.tabDelete.Name = "tabDelete";
             this.tabDelete.Size = new System.Drawing.Size(481, 453);
@@ -447,14 +470,15 @@
             this.tabDelete.Text = "Delete";
             this.tabDelete.UseVisualStyleBackColor = true;
             // 
-            // richTextBox1
+            // rchTxtBxDelete
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(481, 453);
-            this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "";
+            this.rchTxtBxDelete.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxDelete.Location = new System.Drawing.Point(0, 0);
+            this.rchTxtBxDelete.Name = "rchTxtBxDelete";
+            this.rchTxtBxDelete.Size = new System.Drawing.Size(481, 453);
+            this.rchTxtBxDelete.TabIndex = 2;
+            this.rchTxtBxDelete.Text = "";
             // 
             // PortalAPIHelperPluginControl
             // 
@@ -492,9 +516,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
-            this.rchTxtBxDelete.ResumeLayout(false);
+            this.tabControlSnippets.ResumeLayout(false);
             this.tabWrapperFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
+            this.tabUpdate.ResumeLayout(false);
             this.tabDelete.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -528,11 +553,13 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Button btnSaveEntityChanges;
         private System.Windows.Forms.Button btnGenerateSnippets;
-        private System.Windows.Forms.TabControl rchTxtBxDelete;
+        private System.Windows.Forms.TabControl tabControlSnippets;
         private System.Windows.Forms.TabPage tabWrapperFunction;
         private System.Windows.Forms.TabPage tabCreate;
         private System.Windows.Forms.TabPage tabDelete;
         private System.Windows.Forms.RichTextBox rchTxtBxCreate;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox rchTxtBxDelete;
+        private System.Windows.Forms.TabPage tabUpdate;
+        private System.Windows.Forms.RichTextBox rchTxtBxUpdate;
     }
 }

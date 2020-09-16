@@ -11,6 +11,7 @@ namespace PowerPortalWebAPIHelper.Models
     {
         public AttributeItemModel(AttributeMetadata metadata)
         {
+            Metadata = metadata;
             if (metadata.DisplayName.UserLocalizedLabel != null && !string.IsNullOrEmpty(metadata.DisplayName.UserLocalizedLabel.Label))
             {
                 DisplayName = metadata.DisplayName.UserLocalizedLabel.Label;
@@ -23,7 +24,10 @@ namespace PowerPortalWebAPIHelper.Models
             LogicalName = metadata.LogicalName;
 
             DataType = metadata.AttributeType.Value;
+
         }
+
+        public AttributeMetadata Metadata { get; set; }
         public string DisplayName { get; set; }
         public string LogicalName { get; set; }
 

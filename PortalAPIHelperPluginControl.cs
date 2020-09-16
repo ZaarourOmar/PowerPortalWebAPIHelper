@@ -284,12 +284,13 @@ namespace PowerPortalWebAPIHelper
                     RetrieveEntityRequest entityRequest = new RetrieveEntityRequest();
                     entityRequest.LogicalName = logicalName;
                     entityRequest.RetrieveAsIfPublished = true;
-                    entityRequest.EntityFilters = EntityFilters.Attributes;
+                    entityRequest.EntityFilters = EntityFilters.All;
                     var response = (RetrieveEntityResponse)Service.Execute(entityRequest);
 
                     foreach (var attribute in response.EntityMetadata.Attributes)
                     {
-                        if (!MetadataValidator.IsValidAttribute(attribute)) continue; // we don't want calculated fields.
+                        if (!MetadataValidator.IsValidAttribute(attribute)) 
+                            continue; // we don't want calculated fields.
 
                         AttributeItemModel newAttribute = new AttributeItemModel(attribute);
                         SelectedEntityInfo.AllAttributesList.Add(newAttribute);
@@ -440,20 +441,16 @@ namespace PowerPortalWebAPIHelper
         #endregion
 
         #region Snippets Management
+        private void btnGenerateSnippets_Click(object sender, EventArgs e)
+        {
+            PopulateSnippets();
+        }
         private void PopulateSnippets()
         {
             rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
-
-            Dictionary<string, string> sampleFields = new Dictionary<string, string>()
-            {
-                {
-                    "name","omar" 
-                },
-                {
-                    "age","25"
-                }
-            };
-            rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateFunction(SelectedEntityInfo.CollectionName, sampleFields);
+            rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
+            rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
+            rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippet(SelectedEntityInfo.CollectionName);
         }
 
         #endregion
@@ -653,10 +650,7 @@ namespace PowerPortalWebAPIHelper
 
         #endregion
 
-        private void btnGenerateSnippets_Click(object sender, EventArgs e)
-        {
-            PopulateSnippets();
-        }
+       
     }
 
 }
