@@ -24,7 +24,8 @@ namespace PowerPortalWebAPIHelper.Models
             LogicalName = metadata.LogicalName;
 
             DataType = metadata.AttributeType.Value;
-
+            IsValidForCreate = metadata.IsValidForCreate.Value;
+            IsValidForUpdate = metadata.IsValidForUpdate.Value;
         }
 
         public AttributeMetadata Metadata { get; set; }
@@ -33,6 +34,9 @@ namespace PowerPortalWebAPIHelper.Models
 
 
         public AttributeTypeCode DataType { get; set; }
+        public bool IsValidForCreate { get; internal set; }
+        public bool IsValidForUpdate { get; internal set; }
+
         public override string ToString()
         {
             return $"{DisplayName} ({LogicalName})";

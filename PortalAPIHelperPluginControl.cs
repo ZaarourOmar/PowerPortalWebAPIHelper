@@ -29,14 +29,12 @@ namespace PowerPortalWebAPIHelper
         private EntityItemModel SelectedEntityInfo { get; set; } = new EntityItemModel();
         private List<WebsiteModel> Websites = new List<WebsiteModel>();
         public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
-        public bool InnerErrorEnabled { get; set; } = false;
-        public Guid InnerErrorSiteSettingsId { get; set; }
-        private Guid TargetWebsiteId { get; set; } = Guid.Empty;
+        private WebsiteModel SelectedWebsiteInfo { get; set; } = new WebsiteModel();
         #endregion
         #region Plugin Control
         private void PortalAPIHelperPluginControl_Load(object sender, EventArgs e)
         {
-            ShowInfoNotification("This is a notification that can lead to XrmToolBox repository", new Uri("https://github.com/ZaarourOmar/PowerPortalWebAPIHelper"));
+            ShowInfoNotification("Please report bugs or enhancments by clicking on Learn More.", new Uri("https://github.com/ZaarourOmar/PowerPortalWebAPIHelper"));
 
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))
@@ -134,12 +132,11 @@ namespace PowerPortalWebAPIHelper
         }
         private void CleanupPreviousEntityInformationPanel()
         {
-            // Clear previous attribute lists
             chkdLstBxAllAttibutes.Items.Clear();
             EntityInformationContainer.Visible = false;
             SelectedEntityInfo = new EntityItemModel();
-            //txtAllEntitiesFilter.Text = "";
-            //txtAttributeFilter.Text = "";
+            btnCopyCodeSnippet.Visible = false;
+            rchTxtBxCreate.Text = rchTxtBxUpdate.Text = rchTxtBxDelete.Text = rchTxtBxWrapperFunction.Text = "";
         }
         private void ShowEntityInformationPanel()
         {
@@ -173,22 +170,22 @@ namespace PowerPortalWebAPIHelper
             if (innerErrorSiteSetting == null)
             {
                 tsbSwitchInnerError.Text = "Enable Inner Error Tracking";
-                InnerErrorEnabled = false;
-                InnerErrorSiteSettingsId = Guid.Empty;
+                SelectedWebsiteInfo.InnerErrorEnabled = false;
+                SelectedWebsiteInfo.InnerErrorSiteSettingsId = Guid.Empty;
                 return;
             }
             bool isInternalErrorEnabled = innerErrorSiteSetting.GetAttributeValue<string>("adx_value").ToLower() == "true";
             if (isInternalErrorEnabled)
             {
                 tsbSwitchInnerError.Text = "Disable Inner Error Tracking";
-                InnerErrorEnabled = true;
+                SelectedWebsiteInfo.InnerErrorEnabled = true;
             }
             else
             {
                 tsbSwitchInnerError.Text = "Enable Inner Error Tracking";
-                InnerErrorEnabled = false;
+                SelectedWebsiteInfo.InnerErrorEnabled = false;
             }
-            InnerErrorSiteSettingsId = innerErrorSiteSetting.Id;
+            SelectedWebsiteInfo.InnerErrorSiteSettingsId = innerErrorSiteSetting.Id;
         }
         private void btnSaveEntityChanges_Click(object sender, EventArgs e)
         {
@@ -197,11 +194,11 @@ namespace PowerPortalWebAPIHelper
 
             if (SelectedEntityInfo.WebAPIEnabledSiteSettingId == Guid.Empty)
             {
-                CreateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), TargetWebsiteId);
+                CreateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), SelectedWebsiteInfo.Id);
             }
             else
             {
-                UpdateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.WebAPIEnabledSiteSettingId, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), TargetWebsiteId);
+                UpdateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.WebAPIEnabledSiteSettingId, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), SelectedWebsiteInfo.Id);
             }
 
 
@@ -222,11 +219,11 @@ namespace PowerPortalWebAPIHelper
                 }
                 if (SelectedEntityInfo.WebAPIFieldsSiteSettingId == Guid.Empty)
                 {
-                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), TargetWebsiteId);
+                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
                 }
                 else
                 {
-                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), TargetWebsiteId);
+                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
                 }
             }
 
@@ -404,7 +401,7 @@ namespace PowerPortalWebAPIHelper
                     QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
                     siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
                     FilterExpression innerErrorFilter = new FilterExpression(LogicalOperator.And);
-                    innerErrorFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, TargetWebsiteId);
+                    innerErrorFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, SelectedWebsiteInfo.Id);
                     innerErrorFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/error/innererror");
                     siteSettingsQuery.Criteria.AddFilter(innerErrorFilter);
 
@@ -424,17 +421,17 @@ namespace PowerPortalWebAPIHelper
         }
         private void tsbSwitchInnerError_Click(object sender, EventArgs e)
         {
-            if (InnerErrorSiteSettingsId != Guid.Empty)
+            if (SelectedWebsiteInfo.InnerErrorSiteSettingsId != Guid.Empty)
             {
-                UpdateSiteSetting(WebAPISiteSettingTypes.InnerError, InnerErrorSiteSettingsId, null, (InnerErrorEnabled ? "false" : "true"), TargetWebsiteId);
-                InnerErrorEnabled = !InnerErrorEnabled;
-                tsbSwitchInnerError.Text = InnerErrorEnabled ? "Disable Inner Error Tracking" : "Enable Inner Error Tracking";
+                UpdateSiteSetting(WebAPISiteSettingTypes.InnerError, SelectedWebsiteInfo.InnerErrorSiteSettingsId, null, (SelectedWebsiteInfo.InnerErrorEnabled ? "false" : "true"), SelectedWebsiteInfo.Id);
+                SelectedWebsiteInfo.InnerErrorEnabled = !SelectedWebsiteInfo.InnerErrorEnabled;
+                tsbSwitchInnerError.Text = SelectedWebsiteInfo.InnerErrorEnabled ? "Disable Inner Error Tracking" : "Enable Inner Error Tracking";
 
             }
             else
             {
-                CreateSiteSetting(WebAPISiteSettingTypes.InnerError, null, "true", TargetWebsiteId);
-                InnerErrorEnabled = true;
+                CreateSiteSetting(WebAPISiteSettingTypes.InnerError, null, "true", SelectedWebsiteInfo.Id);
+                SelectedWebsiteInfo.InnerErrorEnabled = true;
                 tsbSwitchInnerError.Text = "Disable Inner Error Tracking";
             }
         }
@@ -444,6 +441,7 @@ namespace PowerPortalWebAPIHelper
         private void btnGenerateSnippets_Click(object sender, EventArgs e)
         {
             PopulateSnippets();
+            btnCopyCodeSnippet.Visible = true;
         }
         private void PopulateSnippets()
         {
@@ -451,6 +449,21 @@ namespace PowerPortalWebAPIHelper
             rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
             rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
             rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippet(SelectedEntityInfo.CollectionName);
+        }
+
+        private void btnCopyCodeSnippet_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var selectedTab = tabControlSnippets.SelectedTab;
+                var richTxtBox = selectedTab.Controls[0] as System.Windows.Forms.RichTextBox;
+                Clipboard.SetText(richTxtBox.Text);
+                MessageBox.Show("The snippet has been copied to the clipboard.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         #endregion
@@ -481,7 +494,6 @@ namespace PowerPortalWebAPIHelper
                             tsbWebsiteList.ComboBox.ValueMember = "Id";
                             tsbWebsiteList.Items.Add(new WebsiteModel(websiteName, websiteId));
                         }
-
                         tsbWebsiteList.SelectedIndex = 0;
 
                         LoadInnerErrorTrackingSettings();
@@ -501,8 +513,7 @@ namespace PowerPortalWebAPIHelper
             WebsiteModel selectedWebsite = tsbWebsiteList.SelectedItem as WebsiteModel;
             if (selectedWebsite != null)
             {
-                TargetWebsiteId = selectedWebsite.Id;
-
+                SelectedWebsiteInfo = selectedWebsite;
                 CleanupPreviousEntityInformationPanel();
                 LoadAllEntities();
                 LoadInnerErrorTrackingSettings();
@@ -533,7 +544,7 @@ namespace PowerPortalWebAPIHelper
                     webApiNameFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/error/innererror");
                     siteSettingsQuery.Criteria.AddFilter(webApiNameFilter);
                     FilterExpression webApiWebsiteFilter = new FilterExpression(LogicalOperator.And);
-                    webApiWebsiteFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, TargetWebsiteId);
+                    webApiWebsiteFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, SelectedWebsiteInfo.Id);
                     siteSettingsQuery.Criteria.AddFilter(webApiWebsiteFilter);
 
                     //retreive the settings based on the above query
@@ -587,7 +598,7 @@ namespace PowerPortalWebAPIHelper
                             settingEntity.Attributes["adx_name"] = $"Webapi/error/innererror";
                             settingEntity.Attributes["adx_value"] = value.ToLower();
                             settingEntity.Attributes["adx_websiteid"] = new EntityReference("adx_website", websiteId);
-                            InnerErrorSiteSettingsId = Service.Create(settingEntity);
+                            SelectedWebsiteInfo.InnerErrorSiteSettingsId = Service.Create(settingEntity);
                             break;
                     }
 
@@ -648,9 +659,10 @@ namespace PowerPortalWebAPIHelper
         }
 
 
+
         #endregion
 
-       
+      
     }
 
 }

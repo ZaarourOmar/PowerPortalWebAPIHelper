@@ -26,7 +26,7 @@ namespace PowerPortalWebAPIHelper.Models
 
             LogicalName = metadata.LogicalName;
 
-            CollectionName = metadata.CollectionSchemaName;
+            CollectionName = metadata.LogicalCollectionName;
         }
 
         public string CollectionName { get; set; }

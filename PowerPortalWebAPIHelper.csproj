@@ -168,9 +168,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CodeSnippets\WrapperFunction.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Icons\toolbox_32.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

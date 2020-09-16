@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("PowerPortalWebAPIHelper")]
 [assembly: AssemblyDescription("Enable/disable Entities for Web API and Generate Code Snippets")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Transform365 Business Solutions Inc")]
+[assembly: AssemblyCompany("Omar Zaarour")]
 [assembly: AssemblyProduct("Power Portal WebAPI Helper")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.1")]

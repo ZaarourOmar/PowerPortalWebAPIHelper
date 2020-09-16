@@ -8,7 +8,10 @@ namespace PowerPortalWebAPIHelper.Models
 {
     public class WebsiteModel
     {
-     
+        public WebsiteModel()
+        {
+        }
+
         public WebsiteModel(string websiteName, Guid websiteId)
         {
             this.Name = websiteName;
@@ -17,6 +20,9 @@ namespace PowerPortalWebAPIHelper.Models
 
         public Guid Id { get; set; }
         public string Name { get; set; }
+
+        public bool InnerErrorEnabled { get; set; } = false;
+        public Guid InnerErrorSiteSettingsId { get; set; }
 
         public override string ToString()
         {
