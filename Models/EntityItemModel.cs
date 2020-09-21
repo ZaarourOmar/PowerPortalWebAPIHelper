@@ -27,8 +27,13 @@ namespace PowerPortalWebAPIHelper.Models
             LogicalName = metadata.LogicalName;
 
             CollectionName = metadata.LogicalCollectionName;
+
+            CanRelatedToCustomEntities = metadata.CanBeInCustomEntityAssociation.Value && metadata.IsCustomizable.Value &&metadata.IsLogicalEntity.Value==false;
+
+            
         }
 
+        public bool CanRelatedToCustomEntities { get; set; }
         public string CollectionName { get; set; }
         public string DisplayName { get; set; }
         public string LogicalName { get; set; }

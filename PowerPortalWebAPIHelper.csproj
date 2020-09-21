@@ -132,8 +132,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\HintEnabledTextBox.cs" />
     <Compile Include="MetadataValidator.cs" />
-    <Compile Include="Models\EntityInfo.cs" />
     <Compile Include="Models\EntityItemModel.cs" />
     <Compile Include="Models\AttributeItemModel.cs" />
     <Compile Include="Models\SiteSettings.cs" />
