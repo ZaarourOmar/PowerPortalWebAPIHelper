@@ -30,7 +30,7 @@ namespace PowerPortalWebAPIHelper
         private Settings mySettings;
         private EntityItemModel SelectedEntityInfo { get; set; } = new EntityItemModel();
         private List<WebsiteModel> Websites = new List<WebsiteModel>();
-     
+
         public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
         private WebsiteModel SelectedWebsiteInfo { get; set; } = new WebsiteModel();
         public string RepositoryName => "PowerPortalWebAPIHelper";
@@ -354,7 +354,7 @@ namespace PowerPortalWebAPIHelper
                     entityRequest.EntityFilters = EntityFilters.All;
                     var response = (RetrieveEntityResponse)Service.Execute(entityRequest);
                     SelectedEntityInfo.AllAttributesList.Clear();
-
+                    chkdLstBxAllAttibutes.Items.Clear();
                     foreach (var attribute in response.EntityMetadata.Attributes)
                     {
                         if (!MetadataValidator.IsValidAttribute(attribute))
@@ -485,7 +485,7 @@ namespace PowerPortalWebAPIHelper
             {
                 var richTxtBox = snippetsContextMenu.SourceControl as System.Windows.Forms.RichTextBox;
                 var itemClicked = e.ClickedItem;
-                if (richTxtBox != null &&itemClicked.Name=="tsmCopy")
+                if (richTxtBox != null && itemClicked.Name == "tsmCopy")
                 {
                     Clipboard.SetText(richTxtBox.Text);
                     MessageBox.Show("The snippet has been copied to the clipboard.");
@@ -758,8 +758,8 @@ namespace PowerPortalWebAPIHelper
 
         #endregion
 
-      
-     
+
+
     }
 
 
