@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace PowerPortalWebAPIHelper.Models
 {
+    public enum WebAPISiteSettingTypes { EnabledSetting, FieldsSetting, InnerError }
 
-    public enum WebAPISiteSettingTypes { EnabledSetting ,FieldsSetting,InnerError}
-    class SiteSettings
-    {
-    }
+
+    public enum APIOperationTypes { Create, Update, Delete }
 }

@@ -17,7 +17,7 @@ namespace PowerPortalWebAPIHelper
         public static string GenerateWrapperFunction()
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-            snippetTextBuilder.AppendLine("//This is the wrapper ajax function to execute the API calls. Make sure that this piece of code is loaded before you call the APIs. You can paste this wrapper in the page html content (in a script tag) or you can store it in a webfile and expose it in the header or footer web templates.  depending on your use case");
+            snippetTextBuilder.AppendLine("//This is the wrapper ajax snippet to execute the API calls. Make sure that this piece of code is loaded before you call the APIs. You can paste this wrapper in the page html content (in a script tag) or you can store it in a webfile and expose it in the header or footer web templates.  depending on your use case.");
             snippetTextBuilder.AppendLine();
             snippetTextBuilder.AppendLine("(function(webapi, $){");
             snippetTextBuilder.AppendLine("\tfunction safeAjax(ajaxOptions) {");
@@ -51,7 +51,7 @@ namespace PowerPortalWebAPIHelper
 
         public static string GenerateCreateSnippet(string collectionSchemaName, List<AttributeItemModel> selectedAttributes)
         {
-            string json = GenerateJsonFromFields(selectedAttributes, OperationTypes.Create);
+            string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes.Create);
             StringBuilder jsonObject = new StringBuilder();
             StringBuilder snippetTextBuilder = new StringBuilder();
 
@@ -85,7 +85,7 @@ namespace PowerPortalWebAPIHelper
         public static string GenerateUpdateSnippet(string collectionSchemaName, List<AttributeItemModel> selectedAttributes)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-            snippetTextBuilder.AppendLine("// This is a sample update function using the PATCH operator. Use this when you want to update many attributes in the record. You need to update the ID of the record and the attributes in the json object to your needs. A sample list of attributes and dummy values are provided for you.");
+            snippetTextBuilder.AppendLine("// This is a sample update snippet using the PATCH operator. Use this when you want to update many attributes in the record. You need to update the ID of the record and the attributes in the json object to your needs. A sample list of attributes and dummy values are provided for you.");
             snippetTextBuilder.Append(GenerateBasicUpdateFunction(collectionSchemaName, selectedAttributes));
             snippetTextBuilder.AppendLine();
             snippetTextBuilder.AppendLine();
@@ -98,7 +98,7 @@ namespace PowerPortalWebAPIHelper
         }
         private static string GenerateBasicUpdateFunction(string collectionSchemaName, List<AttributeItemModel> selectedAttributes)
         {
-            string json = GenerateJsonFromFields(selectedAttributes, OperationTypes.Update);
+            string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes.Update);
             StringBuilder snippetTextBuilder = new StringBuilder();
             StringBuilder jsonObject = new StringBuilder();
             jsonObject.AppendLine("var dataObject={");
@@ -145,7 +145,7 @@ namespace PowerPortalWebAPIHelper
 
             StringBuilder snippetTextBuilder = new StringBuilder();
 
-            snippetTextBuilder.AppendLine("// This is a sample delete function using the DELETE operator. Use this when you want to delete a record. You need to specify the ID of the record between the brackets");
+            snippetTextBuilder.AppendLine("// This is a sample delete snippet using the DELETE operator. Use this when you want to delete a record. You need to specify the ID of the record between the brackets.");
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
@@ -160,15 +160,15 @@ namespace PowerPortalWebAPIHelper
         }
 
 
-        private static string GenerateJsonFromFields(List<AttributeItemModel> selectedAttributes, OperationTypes operationType)
+        private static string GenerateJsonFromFields(List<AttributeItemModel> selectedAttributes, APIOperationTypes operationType)
         {
 
             StringBuilder jsonBuilder = new StringBuilder();
             foreach (var attribute in selectedAttributes)
             {
-                if (operationType == OperationTypes.Create && !attribute.IsValidForCreate)
+                if (operationType == APIOperationTypes.Create && !attribute.IsValidForCreate)
                     continue;
-                if (operationType == OperationTypes.Update && !attribute.IsValidForUpdate) 
+                if (operationType == APIOperationTypes.Update && !attribute.IsValidForUpdate) 
                     continue;
 
                 switch (attribute.DataType)
@@ -211,10 +211,11 @@ namespace PowerPortalWebAPIHelper
                         jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"Some String Value\",");
                         break;
                 }
+
+
             }
             return jsonBuilder.ToString();
         }
     }
 
-    public enum OperationTypes { Create, Update, Delete }
 }

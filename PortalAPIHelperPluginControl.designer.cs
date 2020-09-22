@@ -1,4 +1,6 @@
-﻿namespace PowerPortalWebAPIHelper
+﻿using PowerPortalWebAPIHelper.Extensions;
+
+namespace PowerPortalWebAPIHelper
 {
     partial class PortalAPIHelperPluginControl
     {
@@ -28,17 +30,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PortalAPIHelperPluginControl));
             this.toolStripMenu = new System.Windows.Forms.ToolStrip();
             this.tsbClose = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbLoadEntities = new System.Windows.Forms.ToolStripButton();
             this.tsbHowTo = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbWebsiteLabel = new System.Windows.Forms.ToolStripLabel();
-            this.tsbWebsiteList = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbSwitchInnerError = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbSaveChanges = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbGenerateSnippets = new System.Windows.Forms.ToolStripButton();
+            this.tsbWebsiteList = new System.Windows.Forms.ToolStripComboBox();
+            this.tsbWebsiteLabel = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.txtAllEntitiesFilter = new System.Windows.Forms.TextBox();
@@ -48,23 +54,21 @@
             this.chkdLstBxAllAttibutes = new System.Windows.Forms.CheckedListBox();
             this.txtAttributeFilter = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnSaveEntityChanges = new System.Windows.Forms.Button();
             this.lblEntityDisplayName = new System.Windows.Forms.Label();
             this.chkBxIsWebAPIEnabled = new System.Windows.Forms.CheckBox();
             this.lblEntityLogicalName = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.btnGenerateSnippets = new System.Windows.Forms.Button();
-            this.btnCopyCodeSnippet = new System.Windows.Forms.Button();
             this.tabControlSnippets = new System.Windows.Forms.TabControl();
             this.tabWrapperFunction = new System.Windows.Forms.TabPage();
-            this.rchTxtBxWrapperFunction = new System.Windows.Forms.RichTextBox();
+            this.rchTxtBxWrapperFunction = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
+            this.snippetsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.tabCreate = new System.Windows.Forms.TabPage();
-            this.rchTxtBxCreate = new System.Windows.Forms.RichTextBox();
+            this.rchTxtBxCreate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.tabUpdate = new System.Windows.Forms.TabPage();
-            this.rchTxtBxUpdate = new System.Windows.Forms.RichTextBox();
+            this.rchTxtBxUpdate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.tabDelete = new System.Windows.Forms.TabPage();
-            this.rchTxtBxDelete = new System.Windows.Forms.RichTextBox();
+            this.rchTxtBxDelete = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -81,12 +85,9 @@
             this.grpBxEntityAttributes.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
-            this.splitContainer5.Panel1.SuspendLayout();
-            this.splitContainer5.Panel2.SuspendLayout();
-            this.splitContainer5.SuspendLayout();
             this.tabControlSnippets.SuspendLayout();
             this.tabWrapperFunction.SuspendLayout();
+            this.snippetsContextMenu.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabUpdate.SuspendLayout();
             this.tabDelete.SuspendLayout();
@@ -100,86 +101,121 @@
             this.tssSeparator1,
             this.tsbLoadEntities,
             this.tsbHowTo,
-            this.toolStripSeparator1,
-            this.tsbWebsiteLabel,
-            this.tsbWebsiteList,
             this.toolStripSeparator2,
-            this.tsbSwitchInnerError});
+            this.tsbSwitchInnerError,
+            this.toolStripSeparator3,
+            this.tsbSaveChanges,
+            this.toolStripSeparator1,
+            this.tsbGenerateSnippets,
+            this.tsbWebsiteList,
+            this.tsbWebsiteLabel});
             this.toolStripMenu.Location = new System.Drawing.Point(0, 0);
             this.toolStripMenu.Name = "toolStripMenu";
-            this.toolStripMenu.Size = new System.Drawing.Size(1240, 25);
+            this.toolStripMenu.Size = new System.Drawing.Size(1240, 31);
             this.toolStripMenu.TabIndex = 10;
             this.toolStripMenu.Text = "toolStrip1";
             // 
             // tsbClose
             // 
-            this.tsbClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbClose.Image = global::PowerPortalWebAPIHelper.Properties.Resources.closeicon;
             this.tsbClose.Name = "tsbClose";
-            this.tsbClose.Size = new System.Drawing.Size(86, 22);
+            this.tsbClose.Size = new System.Drawing.Size(110, 28);
             this.tsbClose.Text = "Close this tool";
             this.tsbClose.Click += new System.EventHandler(this.tsbClose_Click);
             // 
             // tssSeparator1
             // 
             this.tssSeparator1.Name = "tssSeparator1";
-            this.tssSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.tssSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // tsbLoadEntities
             // 
-            this.tsbLoadEntities.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbLoadEntities.Image = global::PowerPortalWebAPIHelper.Properties.Resources.loadicon;
             this.tsbLoadEntities.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbLoadEntities.Name = "tsbLoadEntities";
-            this.tsbLoadEntities.Size = new System.Drawing.Size(78, 22);
+            this.tsbLoadEntities.Size = new System.Drawing.Size(102, 28);
             this.tsbLoadEntities.Text = "Load Entities";
             this.tsbLoadEntities.Click += new System.EventHandler(this.LoadAllEntities_Click);
             // 
             // tsbHowTo
             // 
             this.tsbHowTo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tsbHowTo.Image = global::PowerPortalWebAPIHelper.Properties.Resources.helpicon;
             this.tsbHowTo.Name = "tsbHowTo";
-            this.tsbHowTo.Size = new System.Drawing.Size(118, 22);
-            this.tsbHowTo.Text = "How to use this tool?";
+            this.tsbHowTo.Size = new System.Drawing.Size(106, 28);
+            this.tsbHowTo.Text = "Why this tool?";
             this.tsbHowTo.Click += new System.EventHandler(this.tsbHowTo_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbSwitchInnerError
+            // 
+            this.tsbSwitchInnerError.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tsbSwitchInnerError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbSwitchInnerError.Enabled = false;
+            this.tsbSwitchInnerError.Image = ((System.Drawing.Image)(resources.GetObject("tsbSwitchInnerError.Image")));
+            this.tsbSwitchInnerError.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSwitchInnerError.Name = "tsbSwitchInnerError";
+            this.tsbSwitchInnerError.Size = new System.Drawing.Size(235, 28);
+            this.tsbSwitchInnerError.Text = "Enable Inner Error Tracking for this website";
+            this.tsbSwitchInnerError.Click += new System.EventHandler(this.tsbSwitchInnerError_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 31);
+            // 
+            // tsbSaveChanges
+            // 
+            this.tsbSaveChanges.Enabled = false;
+            this.tsbSaveChanges.Image = global::PowerPortalWebAPIHelper.Properties.Resources.saveicon;
+            this.tsbSaveChanges.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSaveChanges.Name = "tsbSaveChanges";
+            this.tsbSaveChanges.Size = new System.Drawing.Size(108, 28);
+            this.tsbSaveChanges.Text = "Save Changes";
+            this.tsbSaveChanges.Click += new System.EventHandler(this.tsbSaveChanges_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
-            // tsbWebsiteLabel
+            // tsbGenerateSnippets
             // 
-            this.tsbWebsiteLabel.Name = "tsbWebsiteLabel";
-            this.tsbWebsiteLabel.Size = new System.Drawing.Size(52, 22);
-            this.tsbWebsiteLabel.Text = "Website:";
+            this.tsbGenerateSnippets.Enabled = false;
+            this.tsbGenerateSnippets.Image = global::PowerPortalWebAPIHelper.Properties.Resources.snippetsicon;
+            this.tsbGenerateSnippets.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbGenerateSnippets.Name = "tsbGenerateSnippets";
+            this.tsbGenerateSnippets.Size = new System.Drawing.Size(130, 28);
+            this.tsbGenerateSnippets.Text = "Generate Snippets";
+            this.tsbGenerateSnippets.Click += new System.EventHandler(this.tsbGenerateSnippets_Click);
             // 
             // tsbWebsiteList
             // 
+            this.tsbWebsiteList.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsbWebsiteList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.tsbWebsiteList.Enabled = false;
             this.tsbWebsiteList.Name = "tsbWebsiteList";
-            this.tsbWebsiteList.Size = new System.Drawing.Size(200, 25);
+            this.tsbWebsiteList.Size = new System.Drawing.Size(200, 31);
             this.tsbWebsiteList.Sorted = true;
             this.tsbWebsiteList.SelectedIndexChanged += new System.EventHandler(this.tsbWebsiteList_SelectedIndexChanged);
             // 
-            // toolStripSeparator2
+            // tsbWebsiteLabel
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbSwitchInnerError
-            // 
-            this.tsbSwitchInnerError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbSwitchInnerError.Image = ((System.Drawing.Image)(resources.GetObject("tsbSwitchInnerError.Image")));
-            this.tsbSwitchInnerError.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbSwitchInnerError.Name = "tsbSwitchInnerError";
-            this.tsbSwitchInnerError.Size = new System.Drawing.Size(235, 22);
-            this.tsbSwitchInnerError.Text = "Enable Inner Error Tracking for this website";
-            this.tsbSwitchInnerError.Visible = false;
-            this.tsbSwitchInnerError.Click += new System.EventHandler(this.tsbSwitchInnerError_Click);
+            this.tsbWebsiteLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tsbWebsiteLabel.Enabled = false;
+            this.tsbWebsiteLabel.Name = "tsbWebsiteLabel";
+            this.tsbWebsiteLabel.Size = new System.Drawing.Size(52, 28);
+            this.tsbWebsiteLabel.Text = "Website:";
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 31);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -189,7 +225,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.EntityInformationContainer);
-            this.splitContainer1.Size = new System.Drawing.Size(1240, 540);
+            this.splitContainer1.Size = new System.Drawing.Size(1240, 534);
             this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 5;
             // 
@@ -207,14 +243,14 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.lstBxAllEntities);
-            this.splitContainer2.Size = new System.Drawing.Size(207, 540);
-            this.splitContainer2.SplitterDistance = 28;
+            this.splitContainer2.Size = new System.Drawing.Size(207, 534);
+            this.splitContainer2.SplitterDistance = 27;
             this.splitContainer2.TabIndex = 0;
             // 
             // txtAllEntitiesFilter
             // 
             this.txtAllEntitiesFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txtAllEntitiesFilter.Location = new System.Drawing.Point(0, 8);
+            this.txtAllEntitiesFilter.Location = new System.Drawing.Point(0, 7);
             this.txtAllEntitiesFilter.Name = "txtAllEntitiesFilter";
             this.txtAllEntitiesFilter.Size = new System.Drawing.Size(207, 20);
             this.txtAllEntitiesFilter.TabIndex = 0;
@@ -226,7 +262,7 @@
             this.lstBxAllEntities.FormattingEnabled = true;
             this.lstBxAllEntities.Location = new System.Drawing.Point(0, 0);
             this.lstBxAllEntities.Name = "lstBxAllEntities";
-            this.lstBxAllEntities.Size = new System.Drawing.Size(207, 508);
+            this.lstBxAllEntities.Size = new System.Drawing.Size(207, 503);
             this.lstBxAllEntities.Sorted = true;
             this.lstBxAllEntities.TabIndex = 1;
             this.lstBxAllEntities.SelectedIndexChanged += new System.EventHandler(this.AllEntitiesListBox_SelectedIndexChanged);
@@ -245,7 +281,7 @@
             // EntityInformationContainer.Panel2
             // 
             this.EntityInformationContainer.Panel2.Controls.Add(this.groupBox3);
-            this.EntityInformationContainer.Size = new System.Drawing.Size(1029, 540);
+            this.EntityInformationContainer.Size = new System.Drawing.Size(1029, 534);
             this.EntityInformationContainer.SplitterDistance = 472;
             this.EntityInformationContainer.TabIndex = 0;
             this.EntityInformationContainer.Visible = false;
@@ -257,7 +293,7 @@
             this.grpBxEntityAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpBxEntityAttributes.Location = new System.Drawing.Point(0, 127);
             this.grpBxEntityAttributes.Name = "grpBxEntityAttributes";
-            this.grpBxEntityAttributes.Size = new System.Drawing.Size(472, 413);
+            this.grpBxEntityAttributes.Size = new System.Drawing.Size(472, 407);
             this.grpBxEntityAttributes.TabIndex = 6;
             this.grpBxEntityAttributes.TabStop = false;
             this.grpBxEntityAttributes.Text = "Entity Attributes";
@@ -269,7 +305,7 @@
             this.chkdLstBxAllAttibutes.FormattingEnabled = true;
             this.chkdLstBxAllAttibutes.Location = new System.Drawing.Point(3, 36);
             this.chkdLstBxAllAttibutes.Name = "chkdLstBxAllAttibutes";
-            this.chkdLstBxAllAttibutes.Size = new System.Drawing.Size(466, 374);
+            this.chkdLstBxAllAttibutes.Size = new System.Drawing.Size(466, 368);
             this.chkdLstBxAllAttibutes.Sorted = true;
             this.chkdLstBxAllAttibutes.TabIndex = 5;
             this.chkdLstBxAllAttibutes.SelectedIndexChanged += new System.EventHandler(this.EntityAttributesListBox_SelectedIndexChanged);
@@ -285,7 +321,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnSaveEntityChanges);
             this.groupBox1.Controls.Add(this.lblEntityDisplayName);
             this.groupBox1.Controls.Add(this.chkBxIsWebAPIEnabled);
             this.groupBox1.Controls.Add(this.lblEntityLogicalName);
@@ -297,17 +332,6 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entity Information";
-            // 
-            // btnSaveEntityChanges
-            // 
-            this.btnSaveEntityChanges.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveEntityChanges.Location = new System.Drawing.Point(314, 77);
-            this.btnSaveEntityChanges.Name = "btnSaveEntityChanges";
-            this.btnSaveEntityChanges.Size = new System.Drawing.Size(131, 23);
-            this.btnSaveEntityChanges.TabIndex = 2;
-            this.btnSaveEntityChanges.Text = "Save Entity Changes";
-            this.btnSaveEntityChanges.UseVisualStyleBackColor = true;
-            this.btnSaveEntityChanges.Click += new System.EventHandler(this.btnSaveEntityChanges_Click);
             // 
             // lblEntityDisplayName
             // 
@@ -341,55 +365,14 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.splitContainer5);
+            this.groupBox3.Controls.Add(this.tabControlSnippets);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(0, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(553, 540);
+            this.groupBox3.Size = new System.Drawing.Size(553, 534);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Code Snippets";
-            // 
-            // splitContainer5
-            // 
-            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.Location = new System.Drawing.Point(3, 16);
-            this.splitContainer5.Name = "splitContainer5";
-            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer5.Panel1
-            // 
-            this.splitContainer5.Panel1.Controls.Add(this.btnGenerateSnippets);
-            this.splitContainer5.Panel1.Controls.Add(this.btnCopyCodeSnippet);
-            // 
-            // splitContainer5.Panel2
-            // 
-            this.splitContainer5.Panel2.Controls.Add(this.tabControlSnippets);
-            this.splitContainer5.Size = new System.Drawing.Size(547, 521);
-            this.splitContainer5.SplitterDistance = 68;
-            this.splitContainer5.TabIndex = 2;
-            // 
-            // btnGenerateSnippets
-            // 
-            this.btnGenerateSnippets.Location = new System.Drawing.Point(3, 12);
-            this.btnGenerateSnippets.Name = "btnGenerateSnippets";
-            this.btnGenerateSnippets.Size = new System.Drawing.Size(131, 23);
-            this.btnGenerateSnippets.TabIndex = 6;
-            this.btnGenerateSnippets.Text = "Generate Snippets";
-            this.btnGenerateSnippets.UseVisualStyleBackColor = true;
-            this.btnGenerateSnippets.Click += new System.EventHandler(this.btnGenerateSnippets_Click);
-            // 
-            // btnCopyCodeSnippet
-            // 
-            this.btnCopyCodeSnippet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCopyCodeSnippet.Location = new System.Drawing.Point(409, 16);
-            this.btnCopyCodeSnippet.Name = "btnCopyCodeSnippet";
-            this.btnCopyCodeSnippet.Size = new System.Drawing.Size(131, 23);
-            this.btnCopyCodeSnippet.TabIndex = 8;
-            this.btnCopyCodeSnippet.Text = "Copy This Snippet";
-            this.btnCopyCodeSnippet.UseVisualStyleBackColor = true;
-            this.btnCopyCodeSnippet.Visible = false;
-            this.btnCopyCodeSnippet.Click += new System.EventHandler(this.btnCopyCodeSnippet_Click);
             // 
             // tabControlSnippets
             // 
@@ -398,10 +381,10 @@
             this.tabControlSnippets.Controls.Add(this.tabUpdate);
             this.tabControlSnippets.Controls.Add(this.tabDelete);
             this.tabControlSnippets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControlSnippets.Location = new System.Drawing.Point(0, 0);
+            this.tabControlSnippets.Location = new System.Drawing.Point(3, 16);
             this.tabControlSnippets.Name = "tabControlSnippets";
             this.tabControlSnippets.SelectedIndex = 0;
-            this.tabControlSnippets.Size = new System.Drawing.Size(547, 449);
+            this.tabControlSnippets.Size = new System.Drawing.Size(547, 515);
             this.tabControlSnippets.TabIndex = 7;
             // 
             // tabWrapperFunction
@@ -410,20 +393,36 @@
             this.tabWrapperFunction.Location = new System.Drawing.Point(4, 22);
             this.tabWrapperFunction.Name = "tabWrapperFunction";
             this.tabWrapperFunction.Padding = new System.Windows.Forms.Padding(3);
-            this.tabWrapperFunction.Size = new System.Drawing.Size(539, 423);
+            this.tabWrapperFunction.Size = new System.Drawing.Size(539, 489);
             this.tabWrapperFunction.TabIndex = 0;
             this.tabWrapperFunction.Text = "Wrapper Function";
             this.tabWrapperFunction.UseVisualStyleBackColor = true;
             // 
             // rchTxtBxWrapperFunction
             // 
+            this.rchTxtBxWrapperFunction.ContextMenuStrip = this.snippetsContextMenu;
             this.rchTxtBxWrapperFunction.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rchTxtBxWrapperFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBxWrapperFunction.Location = new System.Drawing.Point(3, 3);
             this.rchTxtBxWrapperFunction.Name = "rchTxtBxWrapperFunction";
-            this.rchTxtBxWrapperFunction.Size = new System.Drawing.Size(533, 417);
+            this.rchTxtBxWrapperFunction.Size = new System.Drawing.Size(533, 483);
             this.rchTxtBxWrapperFunction.TabIndex = 0;
             this.rchTxtBxWrapperFunction.Text = "";
+            // 
+            // snippetsContextMenu
+            // 
+            this.snippetsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmCopy});
+            this.snippetsContextMenu.Name = "snippetsContextMenu";
+            this.snippetsContextMenu.Size = new System.Drawing.Size(146, 26);
+            this.snippetsContextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.snippetsContextMenu_ItemClicked);
+            // 
+            // tsmCopy
+            // 
+            this.tsmCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsmCopy.Name = "tsmCopy";
+            this.tsmCopy.Size = new System.Drawing.Size(145, 22);
+            this.tsmCopy.Text = "Copy Snippet";
             // 
             // tabCreate
             // 
@@ -431,18 +430,19 @@
             this.tabCreate.Location = new System.Drawing.Point(4, 22);
             this.tabCreate.Name = "tabCreate";
             this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCreate.Size = new System.Drawing.Size(539, 423);
+            this.tabCreate.Size = new System.Drawing.Size(539, 489);
             this.tabCreate.TabIndex = 1;
             this.tabCreate.Text = "Create";
             this.tabCreate.UseVisualStyleBackColor = true;
             // 
             // rchTxtBxCreate
             // 
+            this.rchTxtBxCreate.ContextMenuStrip = this.snippetsContextMenu;
             this.rchTxtBxCreate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rchTxtBxCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBxCreate.Location = new System.Drawing.Point(3, 3);
             this.rchTxtBxCreate.Name = "rchTxtBxCreate";
-            this.rchTxtBxCreate.Size = new System.Drawing.Size(533, 417);
+            this.rchTxtBxCreate.Size = new System.Drawing.Size(533, 483);
             this.rchTxtBxCreate.TabIndex = 1;
             this.rchTxtBxCreate.Text = "SomeText";
             // 
@@ -452,18 +452,19 @@
             this.tabUpdate.Location = new System.Drawing.Point(4, 22);
             this.tabUpdate.Name = "tabUpdate";
             this.tabUpdate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabUpdate.Size = new System.Drawing.Size(539, 423);
+            this.tabUpdate.Size = new System.Drawing.Size(539, 489);
             this.tabUpdate.TabIndex = 3;
             this.tabUpdate.Text = "Update";
             this.tabUpdate.UseVisualStyleBackColor = true;
             // 
             // rchTxtBxUpdate
             // 
+            this.rchTxtBxUpdate.ContextMenuStrip = this.snippetsContextMenu;
             this.rchTxtBxUpdate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rchTxtBxUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBxUpdate.Location = new System.Drawing.Point(3, 3);
             this.rchTxtBxUpdate.Name = "rchTxtBxUpdate";
-            this.rchTxtBxUpdate.Size = new System.Drawing.Size(533, 417);
+            this.rchTxtBxUpdate.Size = new System.Drawing.Size(533, 483);
             this.rchTxtBxUpdate.TabIndex = 1;
             this.rchTxtBxUpdate.Text = "";
             // 
@@ -472,18 +473,19 @@
             this.tabDelete.Controls.Add(this.rchTxtBxDelete);
             this.tabDelete.Location = new System.Drawing.Point(4, 22);
             this.tabDelete.Name = "tabDelete";
-            this.tabDelete.Size = new System.Drawing.Size(539, 423);
+            this.tabDelete.Size = new System.Drawing.Size(539, 489);
             this.tabDelete.TabIndex = 2;
             this.tabDelete.Text = "Delete";
             this.tabDelete.UseVisualStyleBackColor = true;
             // 
             // rchTxtBxDelete
             // 
+            this.rchTxtBxDelete.ContextMenuStrip = this.snippetsContextMenu;
             this.rchTxtBxDelete.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rchTxtBxDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBxDelete.Location = new System.Drawing.Point(0, 0);
             this.rchTxtBxDelete.Name = "rchTxtBxDelete";
-            this.rchTxtBxDelete.Size = new System.Drawing.Size(539, 423);
+            this.rchTxtBxDelete.Size = new System.Drawing.Size(539, 489);
             this.rchTxtBxDelete.TabIndex = 2;
             this.rchTxtBxDelete.Text = "";
             // 
@@ -517,12 +519,9 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
-            this.splitContainer5.Panel1.ResumeLayout(false);
-            this.splitContainer5.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
-            this.splitContainer5.ResumeLayout(false);
             this.tabControlSnippets.ResumeLayout(false);
             this.tabWrapperFunction.ResumeLayout(false);
+            this.snippetsContextMenu.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabUpdate.ResumeLayout(false);
             this.tabDelete.ResumeLayout(false);
@@ -542,7 +541,7 @@
         private System.Windows.Forms.ListBox lstBxAllEntities;
         private System.Windows.Forms.SplitContainer EntityInformationContainer;
         private System.Windows.Forms.CheckBox chkBxIsWebAPIEnabled;
-        private System.Windows.Forms.RichTextBox rchTxtBxWrapperFunction;
+        private SimpleSyntaxHighlightingRTB rchTxtBxWrapperFunction;
         private System.Windows.Forms.CheckedListBox chkdLstBxAllAttibutes;
         private System.Windows.Forms.Label lblEntityDisplayName;
         private System.Windows.Forms.Label lblEntityLogicalName;
@@ -552,21 +551,22 @@
         private System.Windows.Forms.TextBox txtAttributeFilter;
         private System.Windows.Forms.ToolStripComboBox tsbWebsiteList;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.Button btnSaveEntityChanges;
-        private System.Windows.Forms.Button btnGenerateSnippets;
         private System.Windows.Forms.TabControl tabControlSnippets;
         private System.Windows.Forms.TabPage tabWrapperFunction;
         private System.Windows.Forms.TabPage tabCreate;
         private System.Windows.Forms.TabPage tabDelete;
-        private System.Windows.Forms.RichTextBox rchTxtBxCreate;
-        private System.Windows.Forms.RichTextBox rchTxtBxDelete;
+        private SimpleSyntaxHighlightingRTB rchTxtBxCreate;
+        private SimpleSyntaxHighlightingRTB rchTxtBxDelete;
         private System.Windows.Forms.TabPage tabUpdate;
-        private System.Windows.Forms.RichTextBox rchTxtBxUpdate;
-        private System.Windows.Forms.Button btnCopyCodeSnippet;
-        private System.Windows.Forms.SplitContainer splitContainer5;
         private System.Windows.Forms.GroupBox grpBxEntityAttributes;
         private System.Windows.Forms.ToolStripLabel tsbWebsiteLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripLabel tsbHowTo;
+        private SimpleSyntaxHighlightingRTB rchTxtBxUpdate;
+        private System.Windows.Forms.ToolStripButton tsbSaveChanges;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton tsbGenerateSnippets;
+        private System.Windows.Forms.ContextMenuStrip snippetsContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem tsmCopy;
     }
 }

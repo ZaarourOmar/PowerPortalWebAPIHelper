@@ -132,11 +132,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\HintEnabledTextBox.cs" />
+    <Compile Include="Extensions\HintEnabledTextBoxExtensions.cs" />
+    <Compile Include="Extensions\SimpleSyntaxHighlightingRTB.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MetadataValidator.cs" />
     <Compile Include="Models\EntityItemModel.cs" />
     <Compile Include="Models\AttributeItemModel.cs" />
-    <Compile Include="Models\SiteSettings.cs" />
+    <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\WebsiteModel.cs" />
     <Compile Include="PortalAPIHelperPlugin.cs" />
     <Compile Include="PortalAPIHelperPluginControl.cs">
@@ -172,6 +175,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icons\toolbox_80.png" />
+    <None Include="Resources\snippetsicon.png" />
+    <None Include="Resources\closeicon.png" />
+    <None Include="Resources\loadicon.png" />
+    <None Include="Resources\saveicon.png" />
+    <None Include="Resources\helpicon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

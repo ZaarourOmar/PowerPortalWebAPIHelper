@@ -19,25 +19,37 @@ using System.Workflow.ComponentModel.Compiler;
 using System.Windows.Controls;
 using System.Activities.Expressions;
 using Extensions;
+using XrmToolBox.Extensibility.Interfaces;
+
 namespace PowerPortalWebAPIHelper
 {
-    public partial class PortalAPIHelperPluginControl : PluginControlBase
+    public partial class PortalAPIHelperPluginControl : PluginControlBase, IGitHubPlugin, INoConnectionRequired
     {
 
-        #region Variables
+        #region Props and Variables
         private Settings mySettings;
         private EntityItemModel SelectedEntityInfo { get; set; } = new EntityItemModel();
         private List<WebsiteModel> Websites = new List<WebsiteModel>();
+     
         public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
         private WebsiteModel SelectedWebsiteInfo { get; set; } = new WebsiteModel();
+        public string RepositoryName => "PowerPortalWebAPIHelper";
+        public string UserName => "ZaarourOmar";
 
         const string ENTITY_FILTER_HINT = "Search for the entity name here..";
         const string ATTRIBUTE_FILTER_HINT = "Search for the attribute name here..";
         const string ENABLE_INNER_ERROR_TEXT = "Enable Inner Error Tracking for this website";
         const string DISABLE_INNER_ERROR_TEXT = "Disable Inner Error Tracking for this website";
+        const string INNER_ERROR_CONFIRMATION_MESSAGE = "This command will either create or update the  sites etting(webapi/innererror/enabled) for the selected website.Do you want to continue?";
+        const string SAVE_CHANGES_CONFIRMATION_MESSAGE = "This command will either create or update the needed site settings for the selected entity and under the selected website, do you want to continue? ";
+
         #endregion
 
         #region Plugin Control
+        public PortalAPIHelperPluginControl()
+        {
+            InitializeComponent();
+        }
         private void PortalAPIHelperPluginControl_Load(object sender, EventArgs e)
         {
             ShowInfoNotification("Please report bugs or enhancments by clicking on Learn More.", new Uri("https://github.com/ZaarourOmar/PowerPortalWebAPIHelper"));
@@ -54,7 +66,6 @@ namespace PowerPortalWebAPIHelper
                 LogInfo("Settings found and loaded");
             }
 
-            ExecuteMethod(LoadWebsites);
         }
         private void tsbClose_Click(object sender, EventArgs e)
         {
@@ -83,24 +94,23 @@ namespace PowerPortalWebAPIHelper
                 LogInfo("Connection has changed to: {0}", detail.WebApplicationUrl);
             }
         }
-
-        #endregion
-
-        #region Constructor
-        public PortalAPIHelperPluginControl()
+        private void tsbHowTo_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
-          
+            string howToHelpString = "";
+            howToHelpString = "This tool quickly enables/disables Portal WebAPI capability for entities and their attributes. Simply ,select the entity you want to enable/disable and select all the attributes you wish to expose through the web api and hit save! In addition, simple Create/Update/Delete Javascript snippets can be generated using this tool. For more detailed setup and usage info of the web api in the portals, please visit https://docs.microsoft.com/en-us/powerapps/maker/portals/web-api-overview ";
+            MessageBox.Show(howToHelpString, "How to", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
         #endregion
 
         #region Entity Management
         private void LoadAllEntities()
         {
+            //clear previous lists
             AllEntitiesList.Clear();
             lstBxAllEntities.Items.Clear();
             txtAllEntitiesFilter.Text = "";
-
+            // load entity list
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Loading Entities",
@@ -133,18 +143,38 @@ namespace PowerPortalWebAPIHelper
                             AllEntitiesList.Add(entityItemModel);
                             lstBxAllEntities.Items.Add(entityItemModel);
                         }
+                        ToggleWebsiteToolbarComponents(true);
                     }
-                    txtAllEntitiesFilter.Select();
-
+                    else
+                    {
+                        ToggleWebsiteToolbarComponents(false);
+                        MessageBox.Show("Error while connecting to the environment.");
+                    }
                 }
             });
+        }
+
+        private void ToggleWebsiteToolbarComponents(bool enabled)
+        {
+            if (enabled)
+            {
+                tsbWebsiteList.Enabled = true;
+                tsbWebsiteLabel.Enabled = true;
+                tsbSwitchInnerError.Enabled = true;
+            }
+            else
+            {
+                tsbWebsiteList.Enabled = false;
+                tsbWebsiteLabel.Enabled = false;
+                tsbSwitchInnerError.Enabled = false;
+
+            }
         }
         private void CleanupPreviousEntityInformationPanel()
         {
             chkdLstBxAllAttibutes.Items.Clear();
             EntityInformationContainer.Visible = false;
             SelectedEntityInfo = new EntityItemModel();
-            btnCopyCodeSnippet.Visible = false;
             rchTxtBxCreate.Text = rchTxtBxUpdate.Text = rchTxtBxDelete.Text = rchTxtBxWrapperFunction.Text = "";
         }
         private void ShowEntityInformationPanel()
@@ -196,46 +226,50 @@ namespace PowerPortalWebAPIHelper
             }
             SelectedWebsiteInfo.InnerErrorSiteSettingsId = innerErrorSiteSetting.Id;
         }
-        private void btnSaveEntityChanges_Click(object sender, EventArgs e)
+
+        private void tsbSaveChanges_Click(object sender, EventArgs e)
         {
-            bool isEnabled = chkBxIsWebAPIEnabled.Checked;
+            if (MessageBox.Show(SAVE_CHANGES_CONFIRMATION_MESSAGE, "Confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                bool isEnabled = chkBxIsWebAPIEnabled.Checked;
 
 
-            if (SelectedEntityInfo.WebAPIEnabledSiteSettingId == Guid.Empty)
-            {
-                CreateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), SelectedWebsiteInfo.Id);
-            }
-            else
-            {
-                UpdateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.WebAPIEnabledSiteSettingId, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), SelectedWebsiteInfo.Id);
-            }
-
-
-            // get the fields setting value;
-            StringBuilder fieldsSettingValue = new StringBuilder();
-            // if all are selected, set the setting value to "*"
-            if (chkdLstBxAllAttibutes.CheckedItems.Count == chkdLstBxAllAttibutes.Items.Count)
-            {
-                fieldsSettingValue.Append("*");
-            }
-            else
-            {
-                foreach (AttributeItemModel checkedItemModel in SelectedEntityInfo.SelectedAttributesList)
+                if (SelectedEntityInfo.WebAPIEnabledSiteSettingId == Guid.Empty)
                 {
-                    fieldsSettingValue.Append(checkedItemModel.LogicalName);
-                    if (SelectedEntityInfo.SelectedAttributesList.IndexOf(checkedItemModel) == SelectedEntityInfo.SelectedAttributesList.Count - 1) break;
-                    fieldsSettingValue.Append(",");
-                }
-                if (SelectedEntityInfo.WebAPIFieldsSiteSettingId == Guid.Empty)
-                {
-                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                    CreateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), SelectedWebsiteInfo.Id);
                 }
                 else
                 {
-                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                    UpdateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, SelectedEntityInfo.WebAPIEnabledSiteSettingId, SelectedEntityInfo.LogicalName, isEnabled.ToString().ToLower(), SelectedWebsiteInfo.Id);
                 }
-            }
 
+
+                // get the fields setting value;
+                StringBuilder fieldsSettingValue = new StringBuilder();
+                // if all are selected, set the setting value to "*"
+                if (chkdLstBxAllAttibutes.CheckedItems.Count == chkdLstBxAllAttibutes.Items.Count)
+                {
+                    fieldsSettingValue.Append("*");
+                }
+                else
+                {
+                    foreach (AttributeItemModel checkedItemModel in SelectedEntityInfo.SelectedAttributesList)
+                    {
+                        fieldsSettingValue.Append(checkedItemModel.LogicalName);
+                        if (SelectedEntityInfo.SelectedAttributesList.IndexOf(checkedItemModel) == SelectedEntityInfo.SelectedAttributesList.Count - 1) break;
+                        fieldsSettingValue.Append(",");
+                    }
+                    if (SelectedEntityInfo.WebAPIFieldsSiteSettingId == Guid.Empty)
+                    {
+                        CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                    }
+                    else
+                    {
+                        UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                    }
+                }
+
+            }
         }
         private void txtAllEntitiesFilter_TextChanged(object sender, EventArgs e)
         {
@@ -260,8 +294,14 @@ namespace PowerPortalWebAPIHelper
         }
         private void LoadAllEntities_Click(object sender, EventArgs e)
         {
-            ExecuteMethod(LoadAllEntities);
-
+            if (Websites == null || Websites.Count == 0)
+            {
+                ExecuteMethod(LoadWebsites);
+            }
+            else
+            {
+                ExecuteMethod(LoadAllEntities);
+            }
         }
         private void AllEntitiesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -280,6 +320,21 @@ namespace PowerPortalWebAPIHelper
             }
 
         }
+        private void ToggleSelectedEntityToolbarComponents(bool enabled)
+        {
+            if (enabled)
+            {
+                tsbSaveChanges.Enabled = true;
+                tsbGenerateSnippets.Enabled = true;
+            }
+            else
+            {
+                tsbSaveChanges.Enabled = false;
+                tsbGenerateSnippets.Enabled = false;
+            }
+
+        }
+
         #endregion
 
         #region Attribute Management
@@ -411,30 +466,42 @@ namespace PowerPortalWebAPIHelper
         private void btnGenerateSnippets_Click(object sender, EventArgs e)
         {
             PopulateSnippets();
-            btnCopyCodeSnippet.Visible = true;
         }
         private void PopulateSnippets()
         {
+            rchTxtBxWrapperFunction.Clear();
+            rchTxtBxCreate.Clear();
+            rchTxtBxUpdate.Clear();
+            rchTxtBxDelete.Clear();
             rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
             rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
             rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
             rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippet(SelectedEntityInfo.CollectionName);
         }
 
-        private void btnCopyCodeSnippet_Click(object sender, EventArgs e)
+        private void snippetsContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             try
             {
-                var selectedTab = tabControlSnippets.SelectedTab;
-                var richTxtBox = selectedTab.Controls[0] as System.Windows.Forms.RichTextBox;
-                Clipboard.SetText(richTxtBox.Text);
-                MessageBox.Show("The snippet has been copied to the clipboard.");
+                var richTxtBox = snippetsContextMenu.SourceControl as System.Windows.Forms.RichTextBox;
+                var itemClicked = e.ClickedItem;
+                if (richTxtBox != null &&itemClicked.Name=="tsmCopy")
+                {
+                    Clipboard.SetText(richTxtBox.Text);
+                    MessageBox.Show("The snippet has been copied to the clipboard.");
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void tsbGenerateSnippets_Click(object sender, EventArgs e)
+        {
+            PopulateSnippets();
+        }
+
 
         #endregion
 
@@ -481,7 +548,6 @@ namespace PowerPortalWebAPIHelper
                     }
                 }
             });
-
 
         }
         private void tsbWebsiteList_SelectedIndexChanged(object sender, EventArgs e)
@@ -530,18 +596,21 @@ namespace PowerPortalWebAPIHelper
         }
         private void tsbSwitchInnerError_Click(object sender, EventArgs e)
         {
-            if (SelectedWebsiteInfo.InnerErrorSiteSettingsId != Guid.Empty)
+            if (MessageBox.Show(INNER_ERROR_CONFIRMATION_MESSAGE, "Confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                UpdateSiteSetting(WebAPISiteSettingTypes.InnerError, SelectedWebsiteInfo.InnerErrorSiteSettingsId, null, (SelectedWebsiteInfo.InnerErrorEnabled ? "false" : "true"), SelectedWebsiteInfo.Id);
-                SelectedWebsiteInfo.InnerErrorEnabled = !SelectedWebsiteInfo.InnerErrorEnabled;
-                tsbSwitchInnerError.Text = SelectedWebsiteInfo.InnerErrorEnabled ? DISABLE_INNER_ERROR_TEXT : ENABLE_INNER_ERROR_TEXT;
+                if (SelectedWebsiteInfo.InnerErrorSiteSettingsId != Guid.Empty)
+                {
+                    UpdateSiteSetting(WebAPISiteSettingTypes.InnerError, SelectedWebsiteInfo.InnerErrorSiteSettingsId, null, (SelectedWebsiteInfo.InnerErrorEnabled ? "false" : "true"), SelectedWebsiteInfo.Id);
+                    SelectedWebsiteInfo.InnerErrorEnabled = !SelectedWebsiteInfo.InnerErrorEnabled;
+                    tsbSwitchInnerError.Text = SelectedWebsiteInfo.InnerErrorEnabled ? DISABLE_INNER_ERROR_TEXT : ENABLE_INNER_ERROR_TEXT;
 
-            }
-            else
-            {
-                CreateSiteSetting(WebAPISiteSettingTypes.InnerError, null, "true", SelectedWebsiteInfo.Id);
-                SelectedWebsiteInfo.InnerErrorEnabled = true;
-                tsbSwitchInnerError.Text = DISABLE_INNER_ERROR_TEXT;
+                }
+                else
+                {
+                    CreateSiteSetting(WebAPISiteSettingTypes.InnerError, null, "true", SelectedWebsiteInfo.Id);
+                    SelectedWebsiteInfo.InnerErrorEnabled = true;
+                    tsbSwitchInnerError.Text = DISABLE_INNER_ERROR_TEXT;
+                }
             }
         }
 
@@ -584,8 +653,12 @@ namespace PowerPortalWebAPIHelper
                 {
                     if (args.Error != null)
                     {
+                        ToggleSelectedEntityToolbarComponents(false);
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
+                    ToggleSelectedEntityToolbarComponents(true);
+
                 }
             });
 
@@ -685,12 +758,9 @@ namespace PowerPortalWebAPIHelper
 
         #endregion
 
-        private void tsbHowTo_Click(object sender, EventArgs e)
-        {
-            string howToHelpString = "";
-            howToHelpString = "This tool quickly enables/disables Portal WebAPI capability for entities and their attributes. Simply ,select the entity you want to enable/disable and select all the attributes you wish to expose through the web api and hit save! In addition, simple Create/Update/Delete Javascript snippets can be generated using this tool. For more detailed setup and usage info of the web api in the portals, please visit https://docs.microsoft.com/en-us/powerapps/maker/portals/web-api-overview ";
-            MessageBox.Show(howToHelpString, "How to", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+      
+     
     }
+
 
 }

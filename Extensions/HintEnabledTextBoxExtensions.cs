@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Extensions
 {
-    public static class MyExtensions
+    public static class HintEnabledTextBoxExtensions
     {
 
         public static void Init(this TextBox textBox, string hintText)
