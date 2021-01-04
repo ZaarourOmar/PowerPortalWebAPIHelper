@@ -60,15 +60,23 @@ namespace PowerPortalWebAPIHelper
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tabControlSnippets = new System.Windows.Forms.TabControl();
             this.tabWrapperFunction = new System.Windows.Forms.TabPage();
-            this.rchTxtBxWrapperFunction = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.snippetsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabOperation = new System.Windows.Forms.TabPage();
             this.tabCreate = new System.Windows.Forms.TabPage();
-            this.rchTxtBxCreate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.tabUpdate = new System.Windows.Forms.TabPage();
-            this.rchTxtBxUpdate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.tabDelete = new System.Windows.Forms.TabPage();
+            this.splitContainerOperation = new System.Windows.Forms.SplitContainer();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.lblOperationType = new System.Windows.Forms.Label();
+            this.groupBoxSnippetSettings = new System.Windows.Forms.GroupBox();
+            this.btnGenerateSnippet = new System.Windows.Forms.Button();
+            this.rchTxtBxWrapperFunction = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
+            this.rchTxtBoxOperation = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
+            this.rchTxtBxCreate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
+            this.rchTxtBxUpdate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBxDelete = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
+            this.chBxUseSelectedFields = new System.Windows.Forms.CheckBox();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -88,9 +96,15 @@ namespace PowerPortalWebAPIHelper
             this.tabControlSnippets.SuspendLayout();
             this.tabWrapperFunction.SuspendLayout();
             this.snippetsContextMenu.SuspendLayout();
+            this.tabOperation.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabUpdate.SuspendLayout();
             this.tabDelete.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerOperation)).BeginInit();
+            this.splitContainerOperation.Panel1.SuspendLayout();
+            this.splitContainerOperation.Panel2.SuspendLayout();
+            this.splitContainerOperation.SuspendLayout();
+            this.groupBoxSnippetSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -377,6 +391,7 @@ namespace PowerPortalWebAPIHelper
             // tabControlSnippets
             // 
             this.tabControlSnippets.Controls.Add(this.tabWrapperFunction);
+            this.tabControlSnippets.Controls.Add(this.tabOperation);
             this.tabControlSnippets.Controls.Add(this.tabCreate);
             this.tabControlSnippets.Controls.Add(this.tabUpdate);
             this.tabControlSnippets.Controls.Add(this.tabDelete);
@@ -398,17 +413,6 @@ namespace PowerPortalWebAPIHelper
             this.tabWrapperFunction.Text = "Wrapper Function";
             this.tabWrapperFunction.UseVisualStyleBackColor = true;
             // 
-            // rchTxtBxWrapperFunction
-            // 
-            this.rchTxtBxWrapperFunction.ContextMenuStrip = this.snippetsContextMenu;
-            this.rchTxtBxWrapperFunction.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBxWrapperFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rchTxtBxWrapperFunction.Location = new System.Drawing.Point(3, 3);
-            this.rchTxtBxWrapperFunction.Name = "rchTxtBxWrapperFunction";
-            this.rchTxtBxWrapperFunction.Size = new System.Drawing.Size(533, 483);
-            this.rchTxtBxWrapperFunction.TabIndex = 0;
-            this.rchTxtBxWrapperFunction.Text = "";
-            // 
             // snippetsContextMenu
             // 
             this.snippetsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -424,6 +428,17 @@ namespace PowerPortalWebAPIHelper
             this.tsmCopy.Size = new System.Drawing.Size(145, 22);
             this.tsmCopy.Text = "Copy Snippet";
             // 
+            // tabOperation
+            // 
+            this.tabOperation.Controls.Add(this.splitContainerOperation);
+            this.tabOperation.Location = new System.Drawing.Point(4, 22);
+            this.tabOperation.Name = "tabOperation";
+            this.tabOperation.Padding = new System.Windows.Forms.Padding(3);
+            this.tabOperation.Size = new System.Drawing.Size(539, 489);
+            this.tabOperation.TabIndex = 4;
+            this.tabOperation.Text = "Operation";
+            this.tabOperation.UseVisualStyleBackColor = true;
+            // 
             // tabCreate
             // 
             this.tabCreate.Controls.Add(this.rchTxtBxCreate);
@@ -434,17 +449,6 @@ namespace PowerPortalWebAPIHelper
             this.tabCreate.TabIndex = 1;
             this.tabCreate.Text = "Create";
             this.tabCreate.UseVisualStyleBackColor = true;
-            // 
-            // rchTxtBxCreate
-            // 
-            this.rchTxtBxCreate.ContextMenuStrip = this.snippetsContextMenu;
-            this.rchTxtBxCreate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBxCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rchTxtBxCreate.Location = new System.Drawing.Point(3, 3);
-            this.rchTxtBxCreate.Name = "rchTxtBxCreate";
-            this.rchTxtBxCreate.Size = new System.Drawing.Size(533, 483);
-            this.rchTxtBxCreate.TabIndex = 1;
-            this.rchTxtBxCreate.Text = "SomeText";
             // 
             // tabUpdate
             // 
@@ -457,6 +461,116 @@ namespace PowerPortalWebAPIHelper
             this.tabUpdate.Text = "Update";
             this.tabUpdate.UseVisualStyleBackColor = true;
             // 
+            // tabDelete
+            // 
+            this.tabDelete.Controls.Add(this.rchTxtBxDelete);
+            this.tabDelete.Location = new System.Drawing.Point(4, 22);
+            this.tabDelete.Name = "tabDelete";
+            this.tabDelete.Size = new System.Drawing.Size(539, 489);
+            this.tabDelete.TabIndex = 2;
+            this.tabDelete.Text = "Delete";
+            this.tabDelete.UseVisualStyleBackColor = true;
+            // 
+            // splitContainerOperation
+            // 
+            this.splitContainerOperation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerOperation.Location = new System.Drawing.Point(3, 3);
+            this.splitContainerOperation.Name = "splitContainerOperation";
+            this.splitContainerOperation.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerOperation.Panel1
+            // 
+            this.splitContainerOperation.Panel1.Controls.Add(this.groupBoxSnippetSettings);
+            // 
+            // splitContainerOperation.Panel2
+            // 
+            this.splitContainerOperation.Panel2.Controls.Add(this.rchTxtBoxOperation);
+            this.splitContainerOperation.Size = new System.Drawing.Size(533, 483);
+            this.splitContainerOperation.SplitterDistance = 108;
+            this.splitContainerOperation.TabIndex = 2;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Create Record",
+            "Delete Record",
+            "Delete Attribute",
+            "Update a Single Value",
+            "Update a group of values",
+            "Associate on Create",
+            "Associate on Update",
+            "Delete an Association"});
+            this.comboBox1.Location = new System.Drawing.Point(92, 26);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 0;
+            // 
+            // lblOperationType
+            // 
+            this.lblOperationType.AutoSize = true;
+            this.lblOperationType.Location = new System.Drawing.Point(6, 29);
+            this.lblOperationType.Name = "lblOperationType";
+            this.lblOperationType.Size = new System.Drawing.Size(80, 13);
+            this.lblOperationType.TabIndex = 1;
+            this.lblOperationType.Text = "Operation Type";
+            // 
+            // groupBoxSnippetSettings
+            // 
+            this.groupBoxSnippetSettings.Controls.Add(this.chBxUseSelectedFields);
+            this.groupBoxSnippetSettings.Controls.Add(this.btnGenerateSnippet);
+            this.groupBoxSnippetSettings.Controls.Add(this.lblOperationType);
+            this.groupBoxSnippetSettings.Controls.Add(this.comboBox1);
+            this.groupBoxSnippetSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBoxSnippetSettings.Location = new System.Drawing.Point(0, 0);
+            this.groupBoxSnippetSettings.Name = "groupBoxSnippetSettings";
+            this.groupBoxSnippetSettings.Size = new System.Drawing.Size(533, 108);
+            this.groupBoxSnippetSettings.TabIndex = 3;
+            this.groupBoxSnippetSettings.TabStop = false;
+            this.groupBoxSnippetSettings.Text = "Snippet Settings";
+            // 
+            // btnGenerateSnippet
+            // 
+            this.btnGenerateSnippet.Location = new System.Drawing.Point(92, 79);
+            this.btnGenerateSnippet.Name = "btnGenerateSnippet";
+            this.btnGenerateSnippet.Size = new System.Drawing.Size(109, 23);
+            this.btnGenerateSnippet.TabIndex = 3;
+            this.btnGenerateSnippet.Text = "Generate Snippet";
+            this.btnGenerateSnippet.UseVisualStyleBackColor = true;
+            // 
+            // rchTxtBxWrapperFunction
+            // 
+            this.rchTxtBxWrapperFunction.ContextMenuStrip = this.snippetsContextMenu;
+            this.rchTxtBxWrapperFunction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxWrapperFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxWrapperFunction.Location = new System.Drawing.Point(3, 3);
+            this.rchTxtBxWrapperFunction.Name = "rchTxtBxWrapperFunction";
+            this.rchTxtBxWrapperFunction.Size = new System.Drawing.Size(533, 483);
+            this.rchTxtBxWrapperFunction.TabIndex = 0;
+            this.rchTxtBxWrapperFunction.Text = "";
+            // 
+            // rchTxtBoxOperation
+            // 
+            this.rchTxtBoxOperation.ContextMenuStrip = this.snippetsContextMenu;
+            this.rchTxtBoxOperation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBoxOperation.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBoxOperation.Location = new System.Drawing.Point(0, 0);
+            this.rchTxtBoxOperation.Name = "rchTxtBoxOperation";
+            this.rchTxtBoxOperation.Size = new System.Drawing.Size(533, 371);
+            this.rchTxtBoxOperation.TabIndex = 1;
+            this.rchTxtBoxOperation.Text = "";
+            // 
+            // rchTxtBxCreate
+            // 
+            this.rchTxtBxCreate.ContextMenuStrip = this.snippetsContextMenu;
+            this.rchTxtBxCreate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBxCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBxCreate.Location = new System.Drawing.Point(3, 3);
+            this.rchTxtBxCreate.Name = "rchTxtBxCreate";
+            this.rchTxtBxCreate.Size = new System.Drawing.Size(533, 483);
+            this.rchTxtBxCreate.TabIndex = 1;
+            this.rchTxtBxCreate.Text = "SomeText";
+            // 
             // rchTxtBxUpdate
             // 
             this.rchTxtBxUpdate.ContextMenuStrip = this.snippetsContextMenu;
@@ -468,16 +582,6 @@ namespace PowerPortalWebAPIHelper
             this.rchTxtBxUpdate.TabIndex = 1;
             this.rchTxtBxUpdate.Text = "";
             // 
-            // tabDelete
-            // 
-            this.tabDelete.Controls.Add(this.rchTxtBxDelete);
-            this.tabDelete.Location = new System.Drawing.Point(4, 22);
-            this.tabDelete.Name = "tabDelete";
-            this.tabDelete.Size = new System.Drawing.Size(539, 489);
-            this.tabDelete.TabIndex = 2;
-            this.tabDelete.Text = "Delete";
-            this.tabDelete.UseVisualStyleBackColor = true;
-            // 
             // rchTxtBxDelete
             // 
             this.rchTxtBxDelete.ContextMenuStrip = this.snippetsContextMenu;
@@ -488,6 +592,15 @@ namespace PowerPortalWebAPIHelper
             this.rchTxtBxDelete.Size = new System.Drawing.Size(539, 489);
             this.rchTxtBxDelete.TabIndex = 2;
             this.rchTxtBxDelete.Text = "";
+            // 
+            // chBxUseSelectedFields
+            // 
+            this.chBxUseSelectedFields.Location = new System.Drawing.Point(232, 10);
+            this.chBxUseSelectedFields.Name = "chBxUseSelectedFields";
+            this.chBxUseSelectedFields.Size = new System.Drawing.Size(283, 52);
+            this.chBxUseSelectedFields.TabIndex = 4;
+            this.chBxUseSelectedFields.Text = "Use Selected Fields for Create/Update record operation in the Snippet";
+            this.chBxUseSelectedFields.UseVisualStyleBackColor = true;
             // 
             // PortalAPIHelperPluginControl
             // 
@@ -522,9 +635,16 @@ namespace PowerPortalWebAPIHelper
             this.tabControlSnippets.ResumeLayout(false);
             this.tabWrapperFunction.ResumeLayout(false);
             this.snippetsContextMenu.ResumeLayout(false);
+            this.tabOperation.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabUpdate.ResumeLayout(false);
             this.tabDelete.ResumeLayout(false);
+            this.splitContainerOperation.Panel1.ResumeLayout(false);
+            this.splitContainerOperation.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerOperation)).EndInit();
+            this.splitContainerOperation.ResumeLayout(false);
+            this.groupBoxSnippetSettings.ResumeLayout(false);
+            this.groupBoxSnippetSettings.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -568,5 +688,13 @@ namespace PowerPortalWebAPIHelper
         private System.Windows.Forms.ToolStripButton tsbGenerateSnippets;
         private System.Windows.Forms.ContextMenuStrip snippetsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem tsmCopy;
+        private System.Windows.Forms.TabPage tabOperation;
+        private SimpleSyntaxHighlightingRTB rchTxtBoxOperation;
+        private System.Windows.Forms.SplitContainer splitContainerOperation;
+        private System.Windows.Forms.Label lblOperationType;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.GroupBox groupBoxSnippetSettings;
+        private System.Windows.Forms.Button btnGenerateSnippet;
+        private System.Windows.Forms.CheckBox chBxUseSelectedFields;
     }
 }

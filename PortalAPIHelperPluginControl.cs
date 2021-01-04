@@ -1,24 +1,17 @@
-﻿using System;
+﻿using Extensions;
+using McTools.Xrm.Connection;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
+using PowerPortalWebAPIHelper.Models;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XrmToolBox.Extensibility;
-using Microsoft.Xrm.Sdk.Query;
-using Microsoft.Xrm.Sdk;
-using McTools.Xrm.Connection;
-using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
-using PowerPortalWebAPIHelper.Models;
-using static System.Windows.Forms.CheckedListBox;
-using System.Workflow.ComponentModel.Compiler;
-using System.Windows.Controls;
-using System.Activities.Expressions;
-using Extensions;
 using XrmToolBox.Extensibility.Interfaces;
 
 namespace PowerPortalWebAPIHelper
@@ -120,7 +113,7 @@ namespace PowerPortalWebAPIHelper
                     RetrieveAllEntitiesRequest retrieveAllEntityRequest = new RetrieveAllEntitiesRequest
                     {
                         RetrieveAsIfPublished = true,
-                        EntityFilters = EntityFilters.Entity
+                        EntityFilters = EntityFilters.Entity | EntityFilters.Relationships
                     };
                     RetrieveAllEntitiesResponse retrieveAllEntityResponse = (RetrieveAllEntitiesResponse)Service.Execute(retrieveAllEntityRequest);
 
@@ -138,39 +131,29 @@ namespace PowerPortalWebAPIHelper
                         foreach (EntityMetadata entityMetadata in entityMetaDataArray)
                         {
                             if (!MetadataValidator.IsValidEntity(entityMetadata)) continue;
+                            if (entityMetadata.LogicalName == "incident")
+                            {
 
+                            }
                             EntityItemModel entityItemModel = new EntityItemModel(entityMetadata);
                             AllEntitiesList.Add(entityItemModel);
                             lstBxAllEntities.Items.Add(entityItemModel);
                         }
                         ToggleWebsiteToolbarComponents(true);
+
                     }
                     else
                     {
                         ToggleWebsiteToolbarComponents(false);
                         MessageBox.Show("Error while connecting to the environment.");
                     }
+                    LoadInnerErrorTrackingSettings();
+
                 }
             });
         }
 
-        private void ToggleWebsiteToolbarComponents(bool enabled)
-        {
-            if (enabled)
-            {
-                tsbWebsiteList.Enabled = true;
-                tsbWebsiteLabel.Enabled = true;
-                tsbSwitchInnerError.Enabled = true;
-            }
-            else
-            {
-                tsbWebsiteList.Enabled = false;
-                tsbWebsiteLabel.Enabled = false;
-                tsbSwitchInnerError.Enabled = false;
-
-            }
-        }
-        private void CleanupPreviousEntityInformationPanel()
+        private void ResetEntityInformationPanel()
         {
             chkdLstBxAllAttibutes.Items.Clear();
             EntityInformationContainer.Visible = false;
@@ -305,7 +288,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void AllEntitiesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CleanupPreviousEntityInformationPanel();
+            ResetEntityInformationPanel();
             EntityItemModel selectedEntity = lstBxAllEntities.SelectedItem as EntityItemModel;
             if (selectedEntity != null)
             {
@@ -341,10 +324,12 @@ namespace PowerPortalWebAPIHelper
         private void LoadSelectedEntityAttributes(string logicalName)
         {
             txtAttributeFilter.Text = "";
-
+            SelectedEntityInfo.AllAttributesList.Clear();
+            chkdLstBxAllAttibutes.Items.Clear();
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Getting entity attributes",
+
                 Work = (worker, args) =>
                 {
 
@@ -353,9 +338,19 @@ namespace PowerPortalWebAPIHelper
                     entityRequest.RetrieveAsIfPublished = true;
                     entityRequest.EntityFilters = EntityFilters.All;
                     var response = (RetrieveEntityResponse)Service.Execute(entityRequest);
-                    SelectedEntityInfo.AllAttributesList.Clear();
-                    chkdLstBxAllAttibutes.Items.Clear();
-                    foreach (var attribute in response.EntityMetadata.Attributes)
+
+                    args.Result = response.EntityMetadata.Attributes;
+
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    var allAttributeMetaData = args.Result as AttributeMetadata[];
+                    foreach (var attribute in allAttributeMetaData)
                     {
                         if (!MetadataValidator.IsValidAttribute(attribute))
                             continue; // we don't want calculated fields.
@@ -364,13 +359,7 @@ namespace PowerPortalWebAPIHelper
                         SelectedEntityInfo.AllAttributesList.Add(newAttribute);
                         chkdLstBxAllAttibutes.Items.Add(newAttribute);
                     }
-                },
-                PostWorkCallBack = (args) =>
-                {
-                    if (args.Error != null)
-                    {
-                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+
                     ExecuteMethod(LoadEntityWebAPISettings, logicalName);
                 }
             });
@@ -476,7 +465,7 @@ namespace PowerPortalWebAPIHelper
             rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
             rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
             rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
-            rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippet(SelectedEntityInfo.CollectionName);
+            rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippets(SelectedEntityInfo.CollectionName);
         }
 
         private void snippetsContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -506,6 +495,24 @@ namespace PowerPortalWebAPIHelper
         #endregion
 
         #region Website Management
+
+
+        private void ToggleWebsiteToolbarComponents(bool enabled)
+        {
+            if (enabled)
+            {
+                tsbWebsiteList.Enabled = true;
+                tsbWebsiteLabel.Enabled = true;
+                tsbSwitchInnerError.Enabled = true;
+            }
+            else
+            {
+                tsbWebsiteList.Enabled = false;
+                tsbWebsiteLabel.Enabled = false;
+                tsbSwitchInnerError.Enabled = false;
+
+            }
+        }
         private void LoadWebsites()
         {
 
@@ -539,7 +546,7 @@ namespace PowerPortalWebAPIHelper
                         }
                         tsbWebsiteList.SelectedIndex = 0;
 
-                        LoadInnerErrorTrackingSettings();
+                       // LoadInnerErrorTrackingSettings();
 
                     }
                     if (args.Error != null)
@@ -556,11 +563,8 @@ namespace PowerPortalWebAPIHelper
             if (selectedWebsite != null)
             {
                 SelectedWebsiteInfo = selectedWebsite;
-                CleanupPreviousEntityInformationPanel();
+                ResetEntityInformationPanel();
                 LoadAllEntities();
-                LoadInnerErrorTrackingSettings();
-
-                //AllEntitiesListBox_SelectedIndexChanged(this, null);
             }
         }
 
@@ -583,7 +587,8 @@ namespace PowerPortalWebAPIHelper
                     var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
                     var innerErrorSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/error/innererror");
 
-                    InitializeInnerErrorSwitchBasedOnSiteSetting(innerErrorSiteSettingEntity);
+                    args.Result = innerErrorSiteSettingEntity;
+
                 },
                 PostWorkCallBack = (args) =>
                 {
@@ -591,6 +596,10 @@ namespace PowerPortalWebAPIHelper
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
+                    Entity innerErrorSiteSettingEntity = args.Result as Entity;
+                    InitializeInnerErrorSwitchBasedOnSiteSetting(innerErrorSiteSettingEntity);
+
                 }
             });
         }
@@ -644,9 +653,8 @@ namespace PowerPortalWebAPIHelper
                     var enabledSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/enabled");
                     var attributeSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/fields");
 
-                    InitializeInnerErrorSwitchBasedOnSiteSetting(innerErrorSiteSettingEntity);
-                    InitializeEnabledCheckBoxBasedOnSiteSetting(enabledSiteSettingEntity);
-                    InitializeAttributesBasedOnSiteSetting(attributeSiteSettingEntity);
+
+                    args.Result = new Tuple<Entity, Entity, Entity>(innerErrorSiteSettingEntity, enabledSiteSettingEntity, attributeSiteSettingEntity);
 
                 },
                 PostWorkCallBack = (args) =>
@@ -657,6 +665,11 @@ namespace PowerPortalWebAPIHelper
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
+
+                    Tuple<Entity, Entity, Entity> results = args.Result as Tuple<Entity, Entity, Entity>;
+                    InitializeInnerErrorSwitchBasedOnSiteSetting(results.Item1);
+                    InitializeEnabledCheckBoxBasedOnSiteSetting(results.Item2);
+                    InitializeAttributesBasedOnSiteSetting(results.Item3);
                     ToggleSelectedEntityToolbarComponents(true);
 
                 }

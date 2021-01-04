@@ -91,11 +91,49 @@ namespace PowerPortalWebAPIHelper
             snippetTextBuilder.AppendLine();
             snippetTextBuilder.AppendLine();
             snippetTextBuilder.AppendLine();
+
+
+
+
             snippetTextBuilder.AppendLine("// This is a sample update function using the PUT operator. Use this when you want to update a single attribute in the record. You need to update the Id of the record and the logical name of the attribute you wish to update. Also, a new value for the attribute must be provided in the json object.");
             snippetTextBuilder.AppendLine(GenerateSinglePropertyUpdateFunction(collectionSchemaName));
 
             return snippetTextBuilder.ToString();
         }
+
+
+        public static string GenerateDeleteSnippets(string collectionSchemaName)
+        {
+
+            StringBuilder snippetTextBuilder = new StringBuilder();
+
+            snippetTextBuilder.AppendLine("// This is a sample delete snippet using the DELETE operator. Use this when you want to delete a record. You need to specify the ID of the record between the brackets.");
+
+            snippetTextBuilder.AppendLine("webapi.safeAjax({");
+            snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + collectionSchemaName + "(YOUR_GUID_HERE)\",");
+            snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
+            snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
+            snippetTextBuilder.AppendLine("\t\tconsole.log(res)");
+            snippetTextBuilder.AppendLine("\t}");
+            snippetTextBuilder.AppendLine("});");
+
+
+
+            snippetTextBuilder.AppendLine("// This is a sample delete snippet to delete a single property using the DELETE operator. Use this when you want to clear out a single property value and not the whole record. You need to specify the ID of the record between the brackets and the logical name of the propery");
+            snippetTextBuilder.AppendLine("webapi.safeAjax({");
+            snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + collectionSchemaName + "(YOUR_GUID_HERE)/ATTRIBUTE_LOGICAL_NAME\",");
+            snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
+            snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
+            snippetTextBuilder.AppendLine("\t\tconsole.log(res)");
+            snippetTextBuilder.AppendLine("\t}");
+            snippetTextBuilder.AppendLine("});");
+
+            return snippetTextBuilder.ToString();
+        }
+
+
         private static string GenerateBasicUpdateFunction(string collectionSchemaName, List<AttributeItemModel> selectedAttributes)
         {
             string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes.Update);
@@ -140,25 +178,7 @@ namespace PowerPortalWebAPIHelper
             return snippetTextBuilder.ToString();
         }
 
-        public static string GenerateDeleteSnippet(string collectionSchemaName)
-        {
-
-            StringBuilder snippetTextBuilder = new StringBuilder();
-
-            snippetTextBuilder.AppendLine("// This is a sample delete snippet using the DELETE operator. Use this when you want to delete a record. You need to specify the ID of the record between the brackets.");
-
-            snippetTextBuilder.AppendLine("webapi.safeAjax({");
-            snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + collectionSchemaName + "(YOUR_GUID_HERE)\",");
-            snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
-            snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
-            snippetTextBuilder.AppendLine("\t\tconsole.log(res)");
-            snippetTextBuilder.AppendLine("\t}");
-            snippetTextBuilder.AppendLine("});");
-
-            return snippetTextBuilder.ToString();
-        }
-
+      
 
         private static string GenerateJsonFromFields(List<AttributeItemModel> selectedAttributes, APIOperationTypes operationType)
         {
