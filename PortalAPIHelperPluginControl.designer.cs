@@ -67,16 +67,19 @@ namespace PowerPortalWebAPIHelper
             this.tabUpdate = new System.Windows.Forms.TabPage();
             this.tabDelete = new System.Windows.Forms.TabPage();
             this.splitContainerOperation = new System.Windows.Forms.SplitContainer();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cbBxOperationType = new System.Windows.Forms.ComboBox();
             this.lblOperationType = new System.Windows.Forms.Label();
             this.groupBoxSnippetSettings = new System.Windows.Forms.GroupBox();
             this.btnGenerateSnippet = new System.Windows.Forms.Button();
+            this.chBxUseSelectedFields = new System.Windows.Forms.CheckBox();
+            this.cbBxAssociateWith = new System.Windows.Forms.ComboBox();
+            this.lblAssociateWith = new System.Windows.Forms.Label();
+            this.grpBxAssociationEntity = new System.Windows.Forms.GroupBox();
             this.rchTxtBxWrapperFunction = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBoxOperation = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBxCreate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBxUpdate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBxDelete = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
-            this.chBxUseSelectedFields = new System.Windows.Forms.CheckBox();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -105,6 +108,7 @@ namespace PowerPortalWebAPIHelper
             this.splitContainerOperation.Panel2.SuspendLayout();
             this.splitContainerOperation.SuspendLayout();
             this.groupBoxSnippetSettings.SuspendLayout();
+            this.grpBxAssociationEntity.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -489,22 +493,14 @@ namespace PowerPortalWebAPIHelper
             this.splitContainerOperation.SplitterDistance = 108;
             this.splitContainerOperation.TabIndex = 2;
             // 
-            // comboBox1
+            // cbBxOperationType
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Create Record",
-            "Delete Record",
-            "Delete Attribute",
-            "Update a Single Value",
-            "Update a group of values",
-            "Associate on Create",
-            "Associate on Update",
-            "Delete an Association"});
-            this.comboBox1.Location = new System.Drawing.Point(92, 26);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 0;
+            this.cbBxOperationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBxOperationType.FormattingEnabled = true;
+            this.cbBxOperationType.Location = new System.Drawing.Point(92, 26);
+            this.cbBxOperationType.Name = "cbBxOperationType";
+            this.cbBxOperationType.Size = new System.Drawing.Size(121, 21);
+            this.cbBxOperationType.TabIndex = 0;
             // 
             // lblOperationType
             // 
@@ -517,10 +513,11 @@ namespace PowerPortalWebAPIHelper
             // 
             // groupBoxSnippetSettings
             // 
+            this.groupBoxSnippetSettings.Controls.Add(this.grpBxAssociationEntity);
             this.groupBoxSnippetSettings.Controls.Add(this.chBxUseSelectedFields);
             this.groupBoxSnippetSettings.Controls.Add(this.btnGenerateSnippet);
             this.groupBoxSnippetSettings.Controls.Add(this.lblOperationType);
-            this.groupBoxSnippetSettings.Controls.Add(this.comboBox1);
+            this.groupBoxSnippetSettings.Controls.Add(this.cbBxOperationType);
             this.groupBoxSnippetSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxSnippetSettings.Location = new System.Drawing.Point(0, 0);
             this.groupBoxSnippetSettings.Name = "groupBoxSnippetSettings";
@@ -531,12 +528,52 @@ namespace PowerPortalWebAPIHelper
             // 
             // btnGenerateSnippet
             // 
-            this.btnGenerateSnippet.Location = new System.Drawing.Point(92, 79);
+            this.btnGenerateSnippet.Location = new System.Drawing.Point(406, 68);
             this.btnGenerateSnippet.Name = "btnGenerateSnippet";
             this.btnGenerateSnippet.Size = new System.Drawing.Size(109, 23);
             this.btnGenerateSnippet.TabIndex = 3;
             this.btnGenerateSnippet.Text = "Generate Snippet";
             this.btnGenerateSnippet.UseVisualStyleBackColor = true;
+            this.btnGenerateSnippet.Click += new System.EventHandler(this.btnGenerateSnippet_Click);
+            // 
+            // chBxUseSelectedFields
+            // 
+            this.chBxUseSelectedFields.Location = new System.Drawing.Point(232, 10);
+            this.chBxUseSelectedFields.Name = "chBxUseSelectedFields";
+            this.chBxUseSelectedFields.Size = new System.Drawing.Size(283, 52);
+            this.chBxUseSelectedFields.TabIndex = 4;
+            this.chBxUseSelectedFields.Text = "Use Selected Fields for Create/Update record operation in the Snippet";
+            this.chBxUseSelectedFields.UseVisualStyleBackColor = true;
+            // 
+            // cbBxAssociateWith
+            // 
+            this.cbBxAssociateWith.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBxAssociateWith.FormattingEnabled = true;
+            this.cbBxAssociateWith.Location = new System.Drawing.Point(93, 13);
+            this.cbBxAssociateWith.Name = "cbBxAssociateWith";
+            this.cbBxAssociateWith.Size = new System.Drawing.Size(111, 21);
+            this.cbBxAssociateWith.TabIndex = 5;
+            // 
+            // lblAssociateWith
+            // 
+            this.lblAssociateWith.AutoSize = true;
+            this.lblAssociateWith.Location = new System.Drawing.Point(6, 16);
+            this.lblAssociateWith.Name = "lblAssociateWith";
+            this.lblAssociateWith.Size = new System.Drawing.Size(81, 13);
+            this.lblAssociateWith.TabIndex = 6;
+            this.lblAssociateWith.Text = "Associate With:";
+            // 
+            // grpBxAssociationEntity
+            // 
+            this.grpBxAssociationEntity.Controls.Add(this.lblAssociateWith);
+            this.grpBxAssociationEntity.Controls.Add(this.cbBxAssociateWith);
+            this.grpBxAssociationEntity.Location = new System.Drawing.Point(9, 60);
+            this.grpBxAssociationEntity.Name = "grpBxAssociationEntity";
+            this.grpBxAssociationEntity.Size = new System.Drawing.Size(238, 42);
+            this.grpBxAssociationEntity.TabIndex = 7;
+            this.grpBxAssociationEntity.TabStop = false;
+            this.grpBxAssociationEntity.Text = "Association Entity";
+            this.grpBxAssociationEntity.Visible = false;
             // 
             // rchTxtBxWrapperFunction
             // 
@@ -593,15 +630,6 @@ namespace PowerPortalWebAPIHelper
             this.rchTxtBxDelete.TabIndex = 2;
             this.rchTxtBxDelete.Text = "";
             // 
-            // chBxUseSelectedFields
-            // 
-            this.chBxUseSelectedFields.Location = new System.Drawing.Point(232, 10);
-            this.chBxUseSelectedFields.Name = "chBxUseSelectedFields";
-            this.chBxUseSelectedFields.Size = new System.Drawing.Size(283, 52);
-            this.chBxUseSelectedFields.TabIndex = 4;
-            this.chBxUseSelectedFields.Text = "Use Selected Fields for Create/Update record operation in the Snippet";
-            this.chBxUseSelectedFields.UseVisualStyleBackColor = true;
-            // 
             // PortalAPIHelperPluginControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -645,6 +673,8 @@ namespace PowerPortalWebAPIHelper
             this.splitContainerOperation.ResumeLayout(false);
             this.groupBoxSnippetSettings.ResumeLayout(false);
             this.groupBoxSnippetSettings.PerformLayout();
+            this.grpBxAssociationEntity.ResumeLayout(false);
+            this.grpBxAssociationEntity.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -692,9 +722,12 @@ namespace PowerPortalWebAPIHelper
         private SimpleSyntaxHighlightingRTB rchTxtBoxOperation;
         private System.Windows.Forms.SplitContainer splitContainerOperation;
         private System.Windows.Forms.Label lblOperationType;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbBxOperationType;
         private System.Windows.Forms.GroupBox groupBoxSnippetSettings;
         private System.Windows.Forms.Button btnGenerateSnippet;
         private System.Windows.Forms.CheckBox chBxUseSelectedFields;
+        private System.Windows.Forms.Label lblAssociateWith;
+        private System.Windows.Forms.ComboBox cbBxAssociateWith;
+        private System.Windows.Forms.GroupBox grpBxAssociationEntity;
     }
 }

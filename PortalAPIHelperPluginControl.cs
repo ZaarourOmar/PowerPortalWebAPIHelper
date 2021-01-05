@@ -42,6 +42,7 @@ namespace PowerPortalWebAPIHelper
         public PortalAPIHelperPluginControl()
         {
             InitializeComponent();
+            InitializeOperationTypes();
         }
         private void PortalAPIHelperPluginControl_Load(object sender, EventArgs e)
         {
@@ -491,6 +492,23 @@ namespace PowerPortalWebAPIHelper
             PopulateSnippets();
         }
 
+        private void InitializeOperationTypes()
+        {
+            cbBxOperationType.DataSource = Enum.GetValues(typeof(APIOperationTypes));
+            cbBxOperationType.SelectedIndexChanged += (sender, arg) =>
+            {
+                if (cbBxOperationType.Text == APIOperationTypes.Associate1ToN.ToString())
+                {
+                    grpBxAssociationEntity.Visible = true;
+                }
+                else
+                {
+                    grpBxAssociationEntity.Visible = false;
+                }
+            };
+            cbBxOperationType.SelectedIndex = 0;
+
+        }
 
         #endregion
 
@@ -546,7 +564,7 @@ namespace PowerPortalWebAPIHelper
                         }
                         tsbWebsiteList.SelectedIndex = 0;
 
-                       // LoadInnerErrorTrackingSettings();
+                        // LoadInnerErrorTrackingSettings();
 
                     }
                     if (args.Error != null)
@@ -769,10 +787,19 @@ namespace PowerPortalWebAPIHelper
 
 
 
+
+
         #endregion
 
+        private void btnGenerateSnippet_Click(object sender, EventArgs e)
+        {
 
-
+            string operationTypeString = cbBxOperationType.Text;
+            APIOperationTypes type = (APIOperationTypes)Enum.Parse(typeof(APIOperationTypes), operationTypeString);
+            bool addFields = chBxUseSelectedFields.Checked;
+            string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, type, addFields);
+            rchTxtBoxOperation.Text = snippet;
+        }
     }
 
 

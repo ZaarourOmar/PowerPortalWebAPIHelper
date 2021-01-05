@@ -9,5 +9,6 @@ namespace PowerPortalWebAPIHelper.Models
     public enum WebAPISiteSettingTypes { EnabledSetting, FieldsSetting, InnerError }
 
 
-    public enum APIOperationTypes { Create, Update, Delete }
+    public enum APIOperationTypes2 { Create, Update, Delete }
+    public enum APIOperationTypes { Create, UpdateField,UpdateMultiple, DeleteRecord,DeleteField,Associate1ToN, AssociateNToN,DeleteAssociation }
 }

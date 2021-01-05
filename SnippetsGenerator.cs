@@ -51,7 +51,7 @@ namespace PowerPortalWebAPIHelper
 
         public static string GenerateCreateSnippet(string collectionSchemaName, List<AttributeItemModel> selectedAttributes)
         {
-            string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes.Create);
+            string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes2.Create);
             StringBuilder jsonObject = new StringBuilder();
             StringBuilder snippetTextBuilder = new StringBuilder();
 
@@ -136,7 +136,7 @@ namespace PowerPortalWebAPIHelper
 
         private static string GenerateBasicUpdateFunction(string collectionSchemaName, List<AttributeItemModel> selectedAttributes)
         {
-            string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes.Update);
+            string json = GenerateJsonFromFields(selectedAttributes, APIOperationTypes2.Update);
             StringBuilder snippetTextBuilder = new StringBuilder();
             StringBuilder jsonObject = new StringBuilder();
             jsonObject.AppendLine("var dataObject={");
@@ -180,15 +180,15 @@ namespace PowerPortalWebAPIHelper
 
       
 
-        private static string GenerateJsonFromFields(List<AttributeItemModel> selectedAttributes, APIOperationTypes operationType)
+        private static string GenerateJsonFromFields(List<AttributeItemModel> selectedAttributes, APIOperationTypes2 operationType)
         {
 
             StringBuilder jsonBuilder = new StringBuilder();
             foreach (var attribute in selectedAttributes)
             {
-                if (operationType == APIOperationTypes.Create && !attribute.IsValidForCreate)
+                if (operationType == APIOperationTypes2.Create && !attribute.IsValidForCreate)
                     continue;
-                if (operationType == APIOperationTypes.Update && !attribute.IsValidForUpdate) 
+                if (operationType == APIOperationTypes2.Update && !attribute.IsValidForUpdate) 
                     continue;
 
                 switch (attribute.DataType)
@@ -235,6 +235,42 @@ namespace PowerPortalWebAPIHelper
 
             }
             return jsonBuilder.ToString();
+        }
+
+        public static string GenerateSnippet(EntityItemModel selectedEntityInfo, APIOperationTypes opType, bool addFields)
+        {
+            switch (opType)
+            {
+                case APIOperationTypes.Create:
+                    
+                    break;
+                case APIOperationTypes.UpdateMultiple:
+
+                    break;
+                case APIOperationTypes.UpdateField:
+
+                    break;
+                case APIOperationTypes.DeleteRecord:
+
+                    break;
+                case APIOperationTypes.DeleteField:
+
+                    break;
+                case APIOperationTypes.Associate1ToN:
+
+                    break;
+                case APIOperationTypes.AssociateNToN:
+
+                    break;
+                case APIOperationTypes.DeleteAssociation:
+
+                    break;
+
+                default:
+                    throw new NotImplementedException("This operation is not implemented yet");
+            }
+
+            return "";
         }
     }
 
