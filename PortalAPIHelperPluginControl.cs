@@ -42,7 +42,6 @@ namespace PowerPortalWebAPIHelper
         public PortalAPIHelperPluginControl()
         {
             InitializeComponent();
-            InitializeOperationTypes();
         }
         private void PortalAPIHelperPluginControl_Load(object sender, EventArgs e)
         {
@@ -153,7 +152,6 @@ namespace PowerPortalWebAPIHelper
                 }
             });
         }
-
         private void ResetEntityInformationPanel()
         {
             chkdLstBxAllAttibutes.Items.Clear();
@@ -300,6 +298,23 @@ namespace PowerPortalWebAPIHelper
                 ShowEntityInformationPanel();
                 txtAttributeFilter.Init(ATTRIBUTE_FILTER_HINT);
                 txtAllEntitiesFilter.Init(ENTITY_FILTER_HINT);
+
+                // find possible associations for snippet generation
+                foreach (var mToMRelationsip in SelectedEntityInfo.MToMRelationships)
+                {
+                    var item = mToMRelationsip.Entity1NavigationPropertyName;
+                    cbBxAssociateWith.Items.Add(new AssociationInfo(mToMRelationsip));
+                }
+                foreach (var mToOneRelationsip in SelectedEntityInfo.MToOneRelationships)
+                {
+                    var item = mToOneRelationsip.SchemaName;
+                    cbBxAssociateWith.Items.Add(new AssociationInfo(mToOneRelationsip));
+                }
+
+
+                // populate the operation type combobox
+                InitializeOperationTypes();
+
 
             }
 
@@ -464,9 +479,9 @@ namespace PowerPortalWebAPIHelper
             rchTxtBxUpdate.Clear();
             rchTxtBxDelete.Clear();
             rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
-            rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
-            rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
-            rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippets(SelectedEntityInfo.CollectionName);
+            //rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
+            //rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
+            //rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippets(SelectedEntityInfo.CollectionName);
         }
 
         private void snippetsContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -494,20 +509,27 @@ namespace PowerPortalWebAPIHelper
 
         private void InitializeOperationTypes()
         {
-            cbBxOperationType.DataSource = Enum.GetValues(typeof(APIOperationTypes));
-            cbBxOperationType.SelectedIndexChanged += (sender, arg) =>
-            {
-                if (cbBxOperationType.Text == APIOperationTypes.Associate1ToN.ToString())
-                {
-                    grpBxAssociationEntity.Visible = true;
-                }
-                else
-                {
-                    grpBxAssociationEntity.Visible = false;
-                }
-            };
+            cbBxOperationType.DataSource = OperationTypeInfo.LoadAvailableTypes();
+            cbBxOperationType.SelectedIndexChanged += CbBxOperationType_SelectedIndexChanged;
             cbBxOperationType.SelectedIndex = 0;
+            CbBxOperationType_SelectedIndexChanged(this, null);
 
+        }
+
+        private void CbBxOperationType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectedItem = cbBxOperationType.SelectedItem as OperationTypeInfo;
+
+            if (selectedItem.Type == APIOperationTypes.Associate)
+            {
+                grpBxAssociationEntity.Visible = true;
+            }
+            else
+            {
+                grpBxAssociationEntity.Visible = false;
+            }
+
+            lblOperationMessage.Text = selectedItem.Message;
         }
 
         #endregion
@@ -794,11 +816,16 @@ namespace PowerPortalWebAPIHelper
         private void btnGenerateSnippet_Click(object sender, EventArgs e)
         {
 
-            string operationTypeString = cbBxOperationType.Text;
-            APIOperationTypes type = (APIOperationTypes)Enum.Parse(typeof(APIOperationTypes), operationTypeString);
-            bool addFields = chBxUseSelectedFields.Checked;
-            string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, type, addFields);
-            rchTxtBoxOperation.Text = snippet;
+            var selectedOperation = cbBxOperationType.SelectedItem as OperationTypeInfo;
+            var selectedAssociation = cbBxAssociateWith.SelectedItem as AssociationInfo;
+            if (selectedOperation != null)
+            {
+                APIOperationTypes operationType = selectedOperation.Type;
+                bool addFields = chBxUseSelectedFields.Checked;
+                string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, selectedOperation.Type, selectedAssociation, addFields);
+                rchTxtBoxOperation.Text = snippet;
+            }
+           
         }
     }
 

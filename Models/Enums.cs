@@ -10,5 +10,5 @@ namespace PowerPortalWebAPIHelper.Models
 
 
     public enum APIOperationTypes2 { Create, Update, Delete }
-    public enum APIOperationTypes { Create, UpdateField,UpdateMultiple, DeleteRecord,DeleteField,Associate1ToN, AssociateNToN,DeleteAssociation }
+    public enum APIOperationTypes { BasicCreate, BasicUpdate,UpdateSingle, BasicDelete,DeleteSingle,Associate, Disassociate }
 }

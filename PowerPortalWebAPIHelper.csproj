@@ -170,6 +170,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AssociationInfo.cs" />
     <Compile Include="Extensions\HintEnabledTextBoxExtensions.cs" />
     <Compile Include="Extensions\SimpleSyntaxHighlightingRTB.cs">
       <SubType>Component</SubType>
@@ -178,6 +179,7 @@
     <Compile Include="Models\EntityItemModel.cs" />
     <Compile Include="Models\AttributeItemModel.cs" />
     <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\OperationTypeInfo.cs" />
     <Compile Include="Models\WebsiteModel.cs" />
     <Compile Include="PortalAPIHelperPlugin.cs" />
     <Compile Include="PortalAPIHelperPluginControl.cs">

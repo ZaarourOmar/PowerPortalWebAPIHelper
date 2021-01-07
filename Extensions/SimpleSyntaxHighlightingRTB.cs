@@ -39,16 +39,9 @@ namespace PowerPortalWebAPIHelper.Extensions
 
         private void HighlightSyntax()
         {
-            foreach (string line in this.Lines)
-            {
-                if (line.StartsWith("//"))
-                {
-                    this.Select(this.Text.IndexOf(line), line.Length - 1);
-                    this.SelectionColor = Color.Green;
-                    this.Select(this.TextLength, 0);
-
-                }
-            }
+            this.SelectAll();
+            this.SelectionColor = Color.Black;
+            this.DeselectAll();
 
             foreach (string word in keywords)
             {
@@ -63,10 +56,23 @@ namespace PowerPortalWebAPIHelper.Extensions
                         this.Select(match.Index, find.Length);
                         this.SelectionColor = Color.Blue;
                         this.Select(this.TextLength, 0);
-                       // this.SelectionColor = this.ForeColor;
+                        // this.SelectionColor = this.ForeColor;
                     };
                 }
             }
+
+            foreach (string line in this.Lines)
+            {
+                if (line.StartsWith("//"))
+                {
+                    this.Select(this.Text.IndexOf(line), line.Length);
+                    this.SelectionColor = Color.Green;
+                    this.Select(this.TextLength, 0);
+
+                }
+            }
+
+            
 
           
         }

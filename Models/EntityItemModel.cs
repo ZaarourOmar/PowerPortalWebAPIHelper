@@ -30,9 +30,14 @@ namespace PowerPortalWebAPIHelper.Models
 
             CanRelatedToCustomEntities = metadata.CanBeInCustomEntityAssociation.Value && metadata.IsCustomizable.Value &&metadata.IsLogicalEntity.Value==false;
 
-            
+            MToMRelationships = metadata.ManyToManyRelationships;
+            MToOneRelationships = metadata.ManyToOneRelationships;
+        
         }
 
+
+        public ManyToManyRelationshipMetadata [] MToMRelationships { get; set; }
+        public OneToManyRelationshipMetadata[] MToOneRelationships { get; set; }
         public bool CanRelatedToCustomEntities { get; set; }
         public string CollectionName { get; set; }
         public string DisplayName { get; set; }
