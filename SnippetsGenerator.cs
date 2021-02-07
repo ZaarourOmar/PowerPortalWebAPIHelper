@@ -120,13 +120,9 @@ namespace PowerPortalWebAPIHelper
                     return GenerateBasicDeleteSnippet(selectedEntityInfo);
                 case APIOperationTypes.DeleteSingle:
                     return GenerateDeleteSingleSnippet(selectedEntityInfo);
-                case APIOperationTypes.Associate:
+                case APIOperationTypes.AssociateDisassociate:
 
                     break;
-                case APIOperationTypes.Disassociate:
-
-                    break;
-
                 default:
                     throw new NotImplementedException("This operation is not implemented yet");
             }

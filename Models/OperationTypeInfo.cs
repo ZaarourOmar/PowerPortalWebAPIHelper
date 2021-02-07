@@ -30,7 +30,7 @@ namespace PowerPortalWebAPIHelper.Models
             types.Add(new OperationTypeInfo("Update a single value in a record using PUT Operation", APIOperationTypes.UpdateSingle));
             types.Add(new OperationTypeInfo("Delete a record by its ID", APIOperationTypes.BasicDelete));
             types.Add(new OperationTypeInfo("Delete a single field on a record", APIOperationTypes.DeleteSingle));
-            types.Add(new OperationTypeInfo("associate ", APIOperationTypes.Associate));
+            types.Add(new OperationTypeInfo("associate ", APIOperationTypes.AssociateDisassociate));
 
             //to be continued
             return types;

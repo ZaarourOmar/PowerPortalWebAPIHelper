@@ -520,7 +520,7 @@ namespace PowerPortalWebAPIHelper
         {
             var selectedItem = cbBxOperationType.SelectedItem as OperationTypeInfo;
 
-            if (selectedItem.Type == APIOperationTypes.Associate)
+            if (selectedItem.Type == APIOperationTypes.AssociateDisassociate)
             {
                 grpBxAssociationEntity.Visible = true;
             }
