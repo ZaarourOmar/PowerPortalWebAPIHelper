@@ -49,11 +49,11 @@ namespace PowerPortalWebAPIHelper
             return snippetTextBuilder.ToString();
         }
 
-        private static string GenerateJsonFromFields(List<AttributeItemModel> selectedAttributes, APIOperationTypes operationType)
+        private static string GenerateJsonFromFields(EntityItemModel selectedEntityInfo, APIOperationTypes operationType)
         {
 
             StringBuilder jsonBuilder = new StringBuilder();
-            foreach (var attribute in selectedAttributes)
+            foreach (var attribute in selectedEntityInfo.SelectedAttributesList)
             {
                 if (operationType == APIOperationTypes.BasicCreate && !attribute.IsValidForCreate)
                     continue;
@@ -89,7 +89,8 @@ namespace PowerPortalWebAPIHelper
                         break;
 
                     case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Lookup:
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":");
+                        var relationship = selectedEntityInfo.MToOneRelationships.First(x => x.ReferencingAttribute == attribute.LogicalName);
+                        jsonBuilder.AppendLine("\t\t\"" + relationship.ReferencedEntityNavigationPropertyName + "\":");
                         jsonBuilder.AppendLine("\t\t{");
                         jsonBuilder.AppendLine("\t\t\t //Add related entity fields");
                         jsonBuilder.AppendLine("\t\t},");
@@ -170,7 +171,7 @@ namespace PowerPortalWebAPIHelper
             StringBuilder snippetTextBuilder = new StringBuilder();
             snippetTextBuilder.AppendLine("// This is a sample basic update snippet using the PATCH operator. You need to specify the ID of the record being updated and the JSON data object for the fields you want to update.");
 
-            string json = addFields ? GenerateJsonFromFields(selectedEntityInfo.SelectedAttributesList, APIOperationTypes.BasicUpdate) : "";
+            string json = addFields ? GenerateJsonFromFields(selectedEntityInfo, APIOperationTypes.BasicUpdate) : "";
             StringBuilder jsonObject = new StringBuilder();
             jsonObject.AppendLine("var dataObject={");
             jsonObject.AppendLine(json);
@@ -217,7 +218,7 @@ namespace PowerPortalWebAPIHelper
 
         private static string GenerateBasicCreateSnippet(EntityItemModel selectedEntityInfo, APIOperationTypes opType, AssociationInfo association, bool addFields)
         {
-            string json = addFields ? GenerateJsonFromFields(selectedEntityInfo.SelectedAttributesList, opType) : "";
+            string json = addFields ? GenerateJsonFromFields(selectedEntityInfo, opType) : "";
             StringBuilder jsonObject = new StringBuilder();
             StringBuilder snippetTextBuilder = new StringBuilder();
 

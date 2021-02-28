@@ -371,11 +371,12 @@ namespace PowerPortalWebAPIHelper
                         if (!MetadataValidator.IsValidAttribute(attribute))
                             continue; // we don't want calculated fields.
 
-                        AttributeItemModel newAttribute = new AttributeItemModel(attribute);
+                        AttributeItemModel newAttribute = new AttributeItemModel(attribute,SelectedEntityInfo);
                         SelectedEntityInfo.AllAttributesList.Add(newAttribute);
                         chkdLstBxAllAttibutes.Items.Add(newAttribute);
                     }
 
+                  
                     ExecuteMethod(LoadEntityWebAPISettings, logicalName);
                 }
             });
