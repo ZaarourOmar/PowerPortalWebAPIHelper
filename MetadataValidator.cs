@@ -12,7 +12,7 @@ namespace PowerPortalWebAPIHelper
         public static bool IsValidAttribute(AttributeMetadata attributeMetadata)
         {
             // return attributeMetadata.DisplayName.LocalizedLabels.Count > 0;
-            return true;
+            return attributeMetadata.IsValidForCreate.Value || attributeMetadata.IsValidForUpdate.Value;
         }
 
         // Microsoft docs doesn't clearly state which entities are good candidates to be exposed to the portal through the web api. The only thing I could find is that data entity (like account and contacts etc) and custom entities are what the users can expose. This validation function tries to limit the entities shown to users based on the above assumption but I can't guarntee that this list is fully inclusive or exclusive until microsoft provides more details on the conditions around the valid entities.

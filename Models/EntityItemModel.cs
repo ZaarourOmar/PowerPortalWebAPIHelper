@@ -46,8 +46,8 @@ namespace PowerPortalWebAPIHelper.Models
         public Guid WebAPIEnabledSiteSettingId { get; set; }
         public Guid WebAPIFieldsSiteSettingId { get; set; }
 
-        public List<AttributeItemModel> SelectedAttributesList { get; set; } = new List<AttributeItemModel>();
-        public List<AttributeItemModel> AllAttributesList { get; set; } = new List<AttributeItemModel>();
+        public List<WebAPIAttributeItemModel> SelectedAttributesList { get; set; } = new List<WebAPIAttributeItemModel>();
+        public List<WebAPIAttributeItemModel> AllAttributesList { get; set; } = new List<WebAPIAttributeItemModel>();
 
         public override string ToString()
         {

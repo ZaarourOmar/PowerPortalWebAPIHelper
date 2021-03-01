@@ -178,7 +178,7 @@
     </Compile>
     <Compile Include="MetadataValidator.cs" />
     <Compile Include="Models\EntityItemModel.cs" />
-    <Compile Include="Models\AttributeItemModel.cs" />
+    <Compile Include="Models\WebAPIAttributeItemModel.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\OperationTypeInfo.cs" />
     <Compile Include="Models\WebsiteModel.cs" />

@@ -1,4 +1,5 @@
-﻿using PowerPortalWebAPIHelper.Models;
+﻿using Microsoft.Xrm.Sdk.Metadata;
+using PowerPortalWebAPIHelper.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -62,38 +63,48 @@ namespace PowerPortalWebAPIHelper
 
                 switch (attribute.DataType)
                 {
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Integer:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.BigInt:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Picklist:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.State:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Status:
+                    case AttributeTypeCode.Integer:
+                    case AttributeTypeCode.BigInt:
+                    case AttributeTypeCode.Picklist:
+                    case AttributeTypeCode.State:
+                    case AttributeTypeCode.Status:
                         jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":" + 0 + ",");
                         break;
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Double:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Decimal:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Money:
+                    case AttributeTypeCode.Double:
+                    case AttributeTypeCode.Decimal:
+                    case AttributeTypeCode.Money:
                         jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":" + 0.0 + ",");
                         break;
 
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Memo:
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.String:
+                    case AttributeTypeCode.Memo:
+                    case AttributeTypeCode.String:
 
                         jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"Some String Value\",");
                         break;
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.DateTime:
+                    case AttributeTypeCode.DateTime:
                         jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"Some Date Value\",");
 
                         break;
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Uniqueidentifier:
+                    case AttributeTypeCode.Uniqueidentifier:
                         jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"" + Guid.Empty.ToString() + "\",");
                         break;
 
-                    case Microsoft.Xrm.Sdk.Metadata.AttributeTypeCode.Lookup:
-                        var relationship = selectedEntityInfo.MToOneRelationships.First(x => x.ReferencingAttribute == attribute.LogicalName);
-                        jsonBuilder.AppendLine("\t\t\"" + relationship.ReferencedEntityNavigationPropertyName + "\":");
-                        jsonBuilder.AppendLine("\t\t{");
-                        jsonBuilder.AppendLine("\t\t\t //Add related entity fields");
-                        jsonBuilder.AppendLine("\t\t},");
+                    case AttributeTypeCode.Lookup:
+                    case AttributeTypeCode.Customer:
+
+                        if (operationType == APIOperationTypes.BasicUpdate || operationType == APIOperationTypes.UpdateSingle)
+                        {
+                            var relatedEntityColelcitonName = attribute.RelatedEntityCollectionName;
+                            jsonBuilder.AppendLine("\t\t\"" + attribute.WebAPIName + ".odata.bind\":portalurl+\"/_api/"+ relatedEntityColelcitonName + "(RELATED ENTITY GUID HERE)" +"\",");
+                        }
+                        else
+                        {
+                            jsonBuilder.AppendLine("\t\t\"" + attribute.WebAPIName + "\":");
+                            jsonBuilder.AppendLine("\t\t{");
+                            jsonBuilder.AppendLine("\t\t\t //Add related entity fields");
+                            jsonBuilder.AppendLine("\t\t},");
+                        }
+                       
 
                         break;
 

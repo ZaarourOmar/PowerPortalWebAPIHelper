@@ -109,13 +109,13 @@ namespace PowerPortalWebAPIHelper
                 Message = "Loading Entities",
                 Work = (worker, args) =>
                 {
-
                     RetrieveAllEntitiesRequest retrieveAllEntityRequest = new RetrieveAllEntitiesRequest
                     {
                         RetrieveAsIfPublished = true,
                         EntityFilters = EntityFilters.Entity | EntityFilters.Relationships
                     };
                     RetrieveAllEntitiesResponse retrieveAllEntityResponse = (RetrieveAllEntitiesResponse)Service.Execute(retrieveAllEntityRequest);
+
 
                     args.Result = retrieveAllEntityResponse.EntityMetadata;
                 },
@@ -131,14 +131,12 @@ namespace PowerPortalWebAPIHelper
                         foreach (EntityMetadata entityMetadata in entityMetaDataArray)
                         {
                             if (!MetadataValidator.IsValidEntity(entityMetadata)) continue;
-                            if (entityMetadata.LogicalName == "incident")
-                            {
 
-                            }
                             EntityItemModel entityItemModel = new EntityItemModel(entityMetadata);
                             AllEntitiesList.Add(entityItemModel);
                             lstBxAllEntities.Items.Add(entityItemModel);
                         }
+                       
                         ToggleWebsiteToolbarComponents(true);
 
                     }
@@ -208,7 +206,6 @@ namespace PowerPortalWebAPIHelper
             }
             SelectedWebsiteInfo.InnerErrorSiteSettingsId = innerErrorSiteSetting.Id;
         }
-
         private void tsbSaveChanges_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show(SAVE_CHANGES_CONFIRMATION_MESSAGE, "Confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
@@ -235,21 +232,21 @@ namespace PowerPortalWebAPIHelper
                 }
                 else
                 {
-                    foreach (AttributeItemModel checkedItemModel in SelectedEntityInfo.SelectedAttributesList)
+                    foreach (WebAPIAttributeItemModel checkedItemModel in SelectedEntityInfo.SelectedAttributesList)
                     {
-                        fieldsSettingValue.Append(checkedItemModel.LogicalName);
+                        fieldsSettingValue.Append(checkedItemModel.WebAPIName);
                         if (SelectedEntityInfo.SelectedAttributesList.IndexOf(checkedItemModel) == SelectedEntityInfo.SelectedAttributesList.Count - 1) break;
                         fieldsSettingValue.Append(",");
                     }
-                    
+
                 }
                 if (SelectedEntityInfo.WebAPIFieldsSiteSettingId == Guid.Empty)
                 {
-                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString(), SelectedWebsiteInfo.Id);
                 }
                 else
                 {
-                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString(), SelectedWebsiteInfo.Id);
                 }
 
             }
@@ -306,12 +303,6 @@ namespace PowerPortalWebAPIHelper
                     var item = mToMRelationsip.Entity1NavigationPropertyName;
                     cbBxAssociateWith.Items.Add(new AssociationInfo(mToMRelationsip));
                 }
-                foreach (var mToOneRelationsip in SelectedEntityInfo.MToOneRelationships)
-                {
-                    var item = mToOneRelationsip.SchemaName;
-                    cbBxAssociateWith.Items.Add(new AssociationInfo(mToOneRelationsip));
-                }
-
 
                 // populate the operation type combobox
                 InitializeOperationTypes();
@@ -343,6 +334,8 @@ namespace PowerPortalWebAPIHelper
             txtAttributeFilter.Text = "";
             SelectedEntityInfo.AllAttributesList.Clear();
             chkdLstBxAllAttibutes.Items.Clear();
+            Dictionary<string, string> relatedEntitiesPluralNames = new Dictionary<string, string>();
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Getting entity attributes",
@@ -356,6 +349,22 @@ namespace PowerPortalWebAPIHelper
                     entityRequest.EntityFilters = EntityFilters.All;
                     var response = (RetrieveEntityResponse)Service.Execute(entityRequest);
 
+
+                    foreach (var mto1Relationship in response.EntityMetadata.ManyToOneRelationships)
+                    {
+                        RetrieveEntityRequest relatedEntityRequest = new RetrieveEntityRequest();
+                        relatedEntityRequest.LogicalName = mto1Relationship.ReferencedEntity;
+                        relatedEntityRequest.EntityFilters = EntityFilters.Entity;
+
+                        RetrieveEntityResponse relatedEntityResponse = (RetrieveEntityResponse)Service.Execute(relatedEntityRequest);
+                        if (!relatedEntitiesPluralNames.ContainsKey(mto1Relationship.ReferencedEntity))
+                        {
+                            relatedEntitiesPluralNames.Add(mto1Relationship.ReferencedEntity, relatedEntityResponse.EntityMetadata.LogicalCollectionName);
+                        }
+                    }
+
+                    // an attribute needs to be aware of all the collection names that it is related to.
+                    WebAPIAttributeItemModel.RelatedEntitiesPluralNames = relatedEntitiesPluralNames;
                     args.Result = response.EntityMetadata.Attributes;
 
                 },
@@ -370,14 +379,27 @@ namespace PowerPortalWebAPIHelper
                     foreach (var attribute in allAttributeMetaData)
                     {
                         if (!MetadataValidator.IsValidAttribute(attribute))
-                            continue; // we don't want calculated fields.
+                            continue;
 
-                        AttributeItemModel newAttribute = new AttributeItemModel(attribute,SelectedEntityInfo);
-                        SelectedEntityInfo.AllAttributesList.Add(newAttribute);
-                        chkdLstBxAllAttibutes.Items.Add(newAttribute);
+                        if(attribute.AttributeType== AttributeTypeCode.Customer)
+                        {
+                            WebAPIAttributeItemModel contactAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo,true, CustomerType.Contact);
+                            WebAPIAttributeItemModel accountAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo,true, CustomerType.Account);
+                            SelectedEntityInfo.AllAttributesList.Add(contactAttribute);
+                            chkdLstBxAllAttibutes.Items.Add(contactAttribute);
+                            SelectedEntityInfo.AllAttributesList.Add(accountAttribute);
+                            chkdLstBxAllAttibutes.Items.Add(accountAttribute);
+                        }
+                        else
+                        {
+                            WebAPIAttributeItemModel newAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo);
+                            SelectedEntityInfo.AllAttributesList.Add(newAttribute);
+                            chkdLstBxAllAttibutes.Items.Add(newAttribute);
+                        }
+                       
                     }
 
-                  
+
                     ExecuteMethod(LoadEntityWebAPISettings, logicalName);
                 }
             });
@@ -404,11 +426,11 @@ namespace PowerPortalWebAPIHelper
                 SelectedEntityInfo.SelectedAttributesList.Clear();
                 for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
                 {
-                    var found = fieldsArray.FirstOrDefault(x => x == ((AttributeItemModel)chkdLstBxAllAttibutes.Items[i]).LogicalName);
+                    var found = fieldsArray.FirstOrDefault(x => x == ((WebAPIAttributeItemModel)chkdLstBxAllAttibutes.Items[i]).WebAPIName);
                     if (found != null)
                     {
                         chkdLstBxAllAttibutes.SetItemChecked(i, true);
-                        SelectedEntityInfo.SelectedAttributesList.Add((AttributeItemModel)chkdLstBxAllAttibutes.Items[i]);
+                        SelectedEntityInfo.SelectedAttributesList.Add((WebAPIAttributeItemModel)chkdLstBxAllAttibutes.Items[i]);
                     }
                 }
 
@@ -420,7 +442,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void EntityAttributesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var changedAttribute = (sender as CheckedListBox).SelectedItem as AttributeItemModel;
+            var changedAttribute = (sender as CheckedListBox).SelectedItem as WebAPIAttributeItemModel;
             var selectedIndex = (sender as CheckedListBox).SelectedIndex;
             if (chkdLstBxAllAttibutes.GetItemChecked(selectedIndex) == true)
             {
@@ -441,7 +463,7 @@ namespace PowerPortalWebAPIHelper
             string txt = txtAttributeFilter.Text;
             if (txt == ATTRIBUTE_FILTER_HINT) return;
 
-            var itemList = SelectedEntityInfo.AllAttributesList.Cast<AttributeItemModel>().ToList();
+            var itemList = SelectedEntityInfo.AllAttributesList.Cast<WebAPIAttributeItemModel>().ToList();
             if (itemList.Count > 0)
             {
                 //clear the items from the list
@@ -451,7 +473,7 @@ namespace PowerPortalWebAPIHelper
                 chkdLstBxAllAttibutes.Items.AddRange(
                     itemList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
 
-                foreach (AttributeItemModel item in SelectedEntityInfo.SelectedAttributesList)
+                foreach (WebAPIAttributeItemModel item in SelectedEntityInfo.SelectedAttributesList)
                 {
                     if (chkdLstBxAllAttibutes.Items.IndexOf(item) >= 0)
                         chkdLstBxAllAttibutes.SetItemChecked(chkdLstBxAllAttibutes.Items.IndexOf(item), true);
@@ -738,7 +760,7 @@ namespace PowerPortalWebAPIHelper
 
                         case WebAPISiteSettingTypes.FieldsSetting:
                             settingEntity.Attributes["adx_name"] = $"Webapi/{entityLogicalName}/fields";
-                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            settingEntity.Attributes["adx_value"] = value;
                             settingEntity.Attributes["adx_websiteid"] = new EntityReference("adx_website", websiteId);
                             SelectedEntityInfo.WebAPIFieldsSiteSettingId = Service.Create(settingEntity);
                             break;
@@ -782,7 +804,7 @@ namespace PowerPortalWebAPIHelper
                             break;
 
                         case WebAPISiteSettingTypes.FieldsSetting:
-                            settingEntity.Attributes["adx_value"] = value.ToLower();
+                            settingEntity.Attributes["adx_value"] = value;
                             settingEntity.Attributes["adx_websiteid"] = new EntityReference("adx_website", websiteId);
                             Service.Update(settingEntity);
                             break;
@@ -827,16 +849,16 @@ namespace PowerPortalWebAPIHelper
                 string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, selectedOperation.Type, selectedAssociation, addFields);
                 rchTxtBoxOperation.Text = snippet;
             }
-           
+
         }
 
         private void chkBxSelectAllAttributes_CheckedChanged(object sender, EventArgs e)
         {
-            for(int i = 0; i < chkdLstBxAllAttibutes.Items.Count;i++)
+            for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
             {
-                chkdLstBxAllAttibutes.SetItemChecked(i,chkBxSelectAllAttributes.Checked);
+                chkdLstBxAllAttibutes.SetItemChecked(i, chkBxSelectAllAttributes.Checked);
             }
-            
+
         }
     }
 
