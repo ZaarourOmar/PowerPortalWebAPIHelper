@@ -81,6 +81,8 @@ namespace PowerPortalWebAPIHelper
             this.rchTxtBxUpdate = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.tabDelete = new System.Windows.Forms.TabPage();
             this.rchTxtBxDelete = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
+            this.chkBxSelectAllAttributes = new System.Windows.Forms.CheckBox();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -110,6 +112,10 @@ namespace PowerPortalWebAPIHelper
             this.tabCreate.SuspendLayout();
             this.tabUpdate.SuspendLayout();
             this.tabDelete.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -307,12 +313,11 @@ namespace PowerPortalWebAPIHelper
             // 
             // grpBxEntityAttributes
             // 
-            this.grpBxEntityAttributes.Controls.Add(this.chkdLstBxAllAttibutes);
-            this.grpBxEntityAttributes.Controls.Add(this.txtAttributeFilter);
+            this.grpBxEntityAttributes.Controls.Add(this.splitContainer3);
             this.grpBxEntityAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpBxEntityAttributes.Location = new System.Drawing.Point(0, 127);
+            this.grpBxEntityAttributes.Location = new System.Drawing.Point(0, 137);
             this.grpBxEntityAttributes.Name = "grpBxEntityAttributes";
-            this.grpBxEntityAttributes.Size = new System.Drawing.Size(472, 407);
+            this.grpBxEntityAttributes.Size = new System.Drawing.Size(472, 397);
             this.grpBxEntityAttributes.TabIndex = 6;
             this.grpBxEntityAttributes.TabStop = false;
             this.grpBxEntityAttributes.Text = "Entity Attributes";
@@ -322,19 +327,18 @@ namespace PowerPortalWebAPIHelper
             this.chkdLstBxAllAttibutes.CheckOnClick = true;
             this.chkdLstBxAllAttibutes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkdLstBxAllAttibutes.FormattingEnabled = true;
-            this.chkdLstBxAllAttibutes.Location = new System.Drawing.Point(3, 36);
+            this.chkdLstBxAllAttibutes.Location = new System.Drawing.Point(0, 0);
             this.chkdLstBxAllAttibutes.Name = "chkdLstBxAllAttibutes";
-            this.chkdLstBxAllAttibutes.Size = new System.Drawing.Size(466, 368);
+            this.chkdLstBxAllAttibutes.Size = new System.Drawing.Size(466, 319);
             this.chkdLstBxAllAttibutes.Sorted = true;
             this.chkdLstBxAllAttibutes.TabIndex = 5;
             this.chkdLstBxAllAttibutes.SelectedIndexChanged += new System.EventHandler(this.EntityAttributesListBox_SelectedIndexChanged);
             // 
             // txtAttributeFilter
             // 
-            this.txtAttributeFilter.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtAttributeFilter.Location = new System.Drawing.Point(3, 16);
+            this.txtAttributeFilter.Location = new System.Drawing.Point(3, 12);
             this.txtAttributeFilter.Name = "txtAttributeFilter";
-            this.txtAttributeFilter.Size = new System.Drawing.Size(466, 20);
+            this.txtAttributeFilter.Size = new System.Drawing.Size(460, 20);
             this.txtAttributeFilter.TabIndex = 4;
             this.txtAttributeFilter.TextChanged += new System.EventHandler(this.txtAttributeFilter_TextChanged);
             // 
@@ -347,7 +351,7 @@ namespace PowerPortalWebAPIHelper
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.MinimumSize = new System.Drawing.Size(300, 100);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(472, 127);
+            this.groupBox1.Size = new System.Drawing.Size(472, 137);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entity Information";
@@ -365,7 +369,7 @@ namespace PowerPortalWebAPIHelper
             // chkBxIsWebAPIEnabled
             // 
             this.chkBxIsWebAPIEnabled.AutoSize = true;
-            this.chkBxIsWebAPIEnabled.Location = new System.Drawing.Point(10, 101);
+            this.chkBxIsWebAPIEnabled.Location = new System.Drawing.Point(6, 104);
             this.chkBxIsWebAPIEnabled.Name = "chkBxIsWebAPIEnabled";
             this.chkBxIsWebAPIEnabled.Size = new System.Drawing.Size(135, 17);
             this.chkBxIsWebAPIEnabled.TabIndex = 3;
@@ -642,6 +646,36 @@ namespace PowerPortalWebAPIHelper
             this.rchTxtBxDelete.TabIndex = 2;
             this.rchTxtBxDelete.Text = "";
             // 
+            // chkBxSelectAllAttributes
+            // 
+            this.chkBxSelectAllAttributes.AutoSize = true;
+            this.chkBxSelectAllAttributes.Location = new System.Drawing.Point(3, 38);
+            this.chkBxSelectAllAttributes.Name = "chkBxSelectAllAttributes";
+            this.chkBxSelectAllAttributes.Size = new System.Drawing.Size(117, 17);
+            this.chkBxSelectAllAttributes.TabIndex = 6;
+            this.chkBxSelectAllAttributes.Text = "Select All Attributes";
+            this.chkBxSelectAllAttributes.UseVisualStyleBackColor = true;
+            this.chkBxSelectAllAttributes.CheckedChanged += new System.EventHandler(this.chkBxSelectAllAttributes_CheckedChanged);
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(3, 16);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.chkBxSelectAllAttributes);
+            this.splitContainer3.Panel1.Controls.Add(this.txtAttributeFilter);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.chkdLstBxAllAttibutes);
+            this.splitContainer3.Size = new System.Drawing.Size(466, 378);
+            this.splitContainer3.SplitterDistance = 55;
+            this.splitContainer3.TabIndex = 0;
+            // 
             // PortalAPIHelperPluginControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -668,7 +702,6 @@ namespace PowerPortalWebAPIHelper
             ((System.ComponentModel.ISupportInitialize)(this.EntityInformationContainer)).EndInit();
             this.EntityInformationContainer.ResumeLayout(false);
             this.grpBxEntityAttributes.ResumeLayout(false);
-            this.grpBxEntityAttributes.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -687,6 +720,11 @@ namespace PowerPortalWebAPIHelper
             this.tabCreate.ResumeLayout(false);
             this.tabUpdate.ResumeLayout(false);
             this.tabDelete.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel1.PerformLayout();
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -742,5 +780,7 @@ namespace PowerPortalWebAPIHelper
         private System.Windows.Forms.ComboBox cbBxAssociateWith;
         private System.Windows.Forms.GroupBox grpBxAssociationEntity;
         private System.Windows.Forms.Label lblOperationMessage;
+        private System.Windows.Forms.CheckBox chkBxSelectAllAttributes;
+        private System.Windows.Forms.SplitContainer splitContainer3;
     }
 }

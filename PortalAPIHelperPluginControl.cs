@@ -241,14 +241,15 @@ namespace PowerPortalWebAPIHelper
                         if (SelectedEntityInfo.SelectedAttributesList.IndexOf(checkedItemModel) == SelectedEntityInfo.SelectedAttributesList.Count - 1) break;
                         fieldsSettingValue.Append(",");
                     }
-                    if (SelectedEntityInfo.WebAPIFieldsSiteSettingId == Guid.Empty)
-                    {
-                        CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
-                    }
-                    else
-                    {
-                        UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
-                    }
+                    
+                }
+                if (SelectedEntityInfo.WebAPIFieldsSiteSettingId == Guid.Empty)
+                {
+                    CreateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
+                }
+                else
+                {
+                    UpdateSiteSetting(WebAPISiteSettingTypes.FieldsSetting, SelectedEntityInfo.WebAPIFieldsSiteSettingId, SelectedEntityInfo.LogicalName, fieldsSettingValue.ToString().ToLower(), SelectedWebsiteInfo.Id);
                 }
 
             }
@@ -826,6 +827,15 @@ namespace PowerPortalWebAPIHelper
                 rchTxtBoxOperation.Text = snippet;
             }
            
+        }
+
+        private void chkBxSelectAllAttributes_CheckedChanged(object sender, EventArgs e)
+        {
+            for(int i = 0; i < chkdLstBxAllAttibutes.Items.Count;i++)
+            {
+                chkdLstBxAllAttibutes.SetItemChecked(i,chkBxSelectAllAttributes.Checked);
+            }
+            
         }
     }
 
