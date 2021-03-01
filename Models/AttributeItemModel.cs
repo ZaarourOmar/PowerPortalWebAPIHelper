@@ -9,7 +9,7 @@ namespace PowerPortalWebAPIHelper.Models
 {
     public class AttributeItemModel
     {
-        public AttributeItemModel(AttributeMetadata metadata)
+        public AttributeItemModel(AttributeMetadata metadata, EntityItemModel selectedEntityInfo)
         {
             Metadata = metadata;
             if (metadata.DisplayName.UserLocalizedLabel != null && !string.IsNullOrEmpty(metadata.DisplayName.UserLocalizedLabel.Label))
@@ -26,6 +26,15 @@ namespace PowerPortalWebAPIHelper.Models
             DataType = metadata.AttributeType.Value;
             IsValidForCreate = metadata.IsValidForCreate.Value;
             IsValidForUpdate = metadata.IsValidForUpdate.Value;
+
+
+            if (metadata.LogicalName == "accountid")
+            {
+                var relationships = selectedEntityInfo.MToOneRelationships.Where(x => x.ReferencedAttribute == metadata.LogicalName);
+                ReferencingEntityNavigationPropertyName = relationships.ElementAt(0).ReferencingEntityNavigationPropertyName;
+            }
+           
+             
         }
 
         public AttributeMetadata Metadata { get; set; }
@@ -36,10 +45,11 @@ namespace PowerPortalWebAPIHelper.Models
         public AttributeTypeCode DataType { get; set; }
         public bool IsValidForCreate { get; internal set; }
         public bool IsValidForUpdate { get; internal set; }
+        public string ReferencingEntityNavigationPropertyName { get; }
 
         public override string ToString()
         {
-            return $"{DisplayName} ({LogicalName})";
+            return $"{DisplayName} ({LogicalName}) ({ReferencingEntityNavigationPropertyName})";
         }
     }
 }
