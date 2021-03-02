@@ -50,11 +50,11 @@ namespace PowerPortalWebAPIHelper
             return snippetTextBuilder.ToString();
         }
 
-        private static string GenerateJsonFromFields(EntityItemModel selectedEntityInfo, APIOperationTypes operationType)
+        private static string GenerateJsonFromFields( List<WebAPIAttributeItemModel> selectedAttribute, APIOperationTypes operationType)
         {
 
             StringBuilder jsonBuilder = new StringBuilder();
-            foreach (var attribute in selectedEntityInfo.SelectedAttributesList)
+            foreach (var attribute in selectedAttribute)
             {
                 if (operationType == APIOperationTypes.BasicCreate && !attribute.IsValidForCreate)
                     continue;
@@ -118,20 +118,20 @@ namespace PowerPortalWebAPIHelper
             return jsonBuilder.ToString();
         }
 
-        public static string GenerateSnippet(EntityItemModel selectedEntityInfo, APIOperationTypes opType, AssociationInfo association, bool addFields)
+        public static string GenerateSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes, APIOperationTypes opType, AssociationInfo association, bool addFields)
         {
             switch (opType)
             {
                 case APIOperationTypes.BasicCreate:
-                    return GenerateBasicCreateSnippet(selectedEntityInfo, opType, association, addFields);
+                    return GenerateBasicCreateSnippet(selectedEntityInfo, selectedAttributes, opType, association, addFields);
                 case APIOperationTypes.UpdateSingle:
-                    return GenerateUpdateSingleSnippet(selectedEntityInfo);
+                    return GenerateUpdateSingleSnippet(selectedEntityInfo,selectedAttributes);
                 case APIOperationTypes.BasicUpdate:
-                    return GenerateBasicUpdateSnippet(selectedEntityInfo, opType, association, addFields);
+                    return GenerateBasicUpdateSnippet(selectedEntityInfo, selectedAttributes, opType, association, addFields);
                 case APIOperationTypes.BasicDelete:
-                    return GenerateBasicDeleteSnippet(selectedEntityInfo);
+                    return GenerateBasicDeleteSnippet(selectedEntityInfo, selectedAttributes);
                 case APIOperationTypes.DeleteSingle:
-                    return GenerateDeleteSingleSnippet(selectedEntityInfo);
+                    return GenerateDeleteSingleSnippet(selectedEntityInfo, selectedAttributes);
                 case APIOperationTypes.AssociateDisassociate:
 
                     break;
@@ -142,7 +142,7 @@ namespace PowerPortalWebAPIHelper
             return "";
         }
 
-        private static string GenerateDeleteSingleSnippet(EntityItemModel selectedEntityInfo)
+        private static string GenerateDeleteSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
             snippetTextBuilder.AppendLine("// This is a sample delete snippet to delete a single property using the DELETE operator. Use this when you want to clear out a single property value and not the whole record. You need to specify the ID of the record between the brackets and the logical name of the propery");
@@ -158,7 +158,7 @@ namespace PowerPortalWebAPIHelper
             return snippetTextBuilder.ToString();
         }
 
-        private static string GenerateBasicDeleteSnippet(EntityItemModel selectedEntityInfo)
+        private static string GenerateBasicDeleteSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
 
@@ -176,13 +176,13 @@ namespace PowerPortalWebAPIHelper
             return snippetTextBuilder.ToString();
         }
 
-        private static string GenerateBasicUpdateSnippet(EntityItemModel selectedEntityInfo, APIOperationTypes opType, AssociationInfo association, bool addFields)
+        private static string GenerateBasicUpdateSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes, APIOperationTypes opType, AssociationInfo association, bool addFields)
         {
 
             StringBuilder snippetTextBuilder = new StringBuilder();
             snippetTextBuilder.AppendLine("// This is a sample basic update snippet using the PATCH operator. You need to specify the ID of the record being updated and the JSON data object for the fields you want to update.");
 
-            string json = addFields ? GenerateJsonFromFields(selectedEntityInfo, APIOperationTypes.BasicUpdate) : "";
+            string json = addFields ? GenerateJsonFromFields(selectedAttributes, APIOperationTypes.BasicUpdate) : "";
             StringBuilder jsonObject = new StringBuilder();
             jsonObject.AppendLine("var dataObject={");
             jsonObject.AppendLine(json);
@@ -205,7 +205,7 @@ namespace PowerPortalWebAPIHelper
 
             return snippetTextBuilder.ToString();
         }
-        private static string GenerateUpdateSingleSnippet(EntityItemModel selectedEntityInfo)
+        private static string GenerateUpdateSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
 
@@ -227,9 +227,9 @@ namespace PowerPortalWebAPIHelper
             return snippetTextBuilder.ToString();
         }
 
-        private static string GenerateBasicCreateSnippet(EntityItemModel selectedEntityInfo, APIOperationTypes opType, AssociationInfo association, bool addFields)
+        private static string GenerateBasicCreateSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes, APIOperationTypes opType, AssociationInfo association, bool addFields)
         {
-            string json = addFields ? GenerateJsonFromFields(selectedEntityInfo, opType) : "";
+            string json = addFields ? GenerateJsonFromFields(selectedAttributes, opType) : "";
             StringBuilder jsonObject = new StringBuilder();
             StringBuilder snippetTextBuilder = new StringBuilder();
 

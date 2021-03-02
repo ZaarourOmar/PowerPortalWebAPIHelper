@@ -11,6 +11,10 @@ namespace PowerPortalWebAPIHelper
         // an attribute is valid if it has a display name 
         public static bool IsValidAttribute(AttributeMetadata attributeMetadata)
         {
+            if(attributeMetadata.LogicalName== "address1_addressid")
+            {
+
+            }
             // return attributeMetadata.DisplayName.LocalizedLabels.Count > 0;
             return attributeMetadata.IsValidForCreate.Value || attributeMetadata.IsValidForUpdate.Value;
         }

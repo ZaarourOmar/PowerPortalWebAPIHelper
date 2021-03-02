@@ -23,7 +23,7 @@ namespace PowerPortalWebAPIHelper
         private Settings mySettings;
         private EntityItemModel SelectedEntityInfo { get; set; } = new EntityItemModel();
         private List<WebsiteModel> Websites = new List<WebsiteModel>();
-
+        private bool ForceAllAttributeCheck = true;
         public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
         private WebsiteModel SelectedWebsiteInfo { get; set; } = new WebsiteModel();
         public string RepositoryName => "PowerPortalWebAPIHelper";
@@ -136,7 +136,7 @@ namespace PowerPortalWebAPIHelper
                             AllEntitiesList.Add(entityItemModel);
                             lstBxAllEntities.Items.Add(entityItemModel);
                         }
-                       
+
                         ToggleWebsiteToolbarComponents(true);
 
                     }
@@ -155,7 +155,6 @@ namespace PowerPortalWebAPIHelper
             chkdLstBxAllAttibutes.Items.Clear();
             EntityInformationContainer.Visible = false;
             SelectedEntityInfo = new EntityItemModel();
-            rchTxtBxCreate.Text = rchTxtBxUpdate.Text = rchTxtBxDelete.Text = rchTxtBxWrapperFunction.Text = "";
         }
         private void ShowEntityInformationPanel()
         {
@@ -294,8 +293,6 @@ namespace PowerPortalWebAPIHelper
             if (selectedEntity != null)
             {
                 SelectedEntityInfo = selectedEntity;
-                lblEntityLogicalName.Text = $"Entity Logical Name: {SelectedEntityInfo.LogicalName}";
-                lblEntityDisplayName.Text = $"Entity Display Name: {SelectedEntityInfo.DisplayName}";
                 ExecuteMethod(LoadSelectedEntityAttributes, SelectedEntityInfo.LogicalName);
                 ShowEntityInformationPanel();
                 txtAttributeFilter.Init(ATTRIBUTE_FILTER_HINT);
@@ -320,12 +317,10 @@ namespace PowerPortalWebAPIHelper
             if (enabled)
             {
                 tsbSaveChanges.Enabled = true;
-                tsbGenerateSnippets.Enabled = true;
             }
             else
             {
                 tsbSaveChanges.Enabled = false;
-                tsbGenerateSnippets.Enabled = false;
             }
 
         }
@@ -385,10 +380,10 @@ namespace PowerPortalWebAPIHelper
                         if (!MetadataValidator.IsValidAttribute(attribute))
                             continue;
 
-                        if(attribute.AttributeType== AttributeTypeCode.Customer)
+                        if (attribute.AttributeType == AttributeTypeCode.Customer)
                         {
-                            WebAPIAttributeItemModel contactAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo,true, CustomerType.Contact);
-                            WebAPIAttributeItemModel accountAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo,true, CustomerType.Account);
+                            WebAPIAttributeItemModel contactAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo, true, CustomerType.Contact);
+                            WebAPIAttributeItemModel accountAttribute = new WebAPIAttributeItemModel(attribute, SelectedEntityInfo, true, CustomerType.Account);
                             SelectedEntityInfo.AllAttributesList.Add(contactAttribute);
                             chkdLstBxAllAttibutes.Items.Add(contactAttribute);
                             SelectedEntityInfo.AllAttributesList.Add(accountAttribute);
@@ -400,7 +395,7 @@ namespace PowerPortalWebAPIHelper
                             SelectedEntityInfo.AllAttributesList.Add(newAttribute);
                             chkdLstBxAllAttibutes.Items.Add(newAttribute);
                         }
-                       
+
                     }
 
 
@@ -410,6 +405,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void InitializeAttributesBasedOnSiteSetting(Entity attributeSiteSettingEntity)
         {
+            chkBxSelectAllAttributes.Checked = false;
             if (attributeSiteSettingEntity != null)
             {
                 SelectedEntityInfo.WebAPIFieldsSiteSettingId = attributeSiteSettingEntity.Id;
@@ -420,32 +416,34 @@ namespace PowerPortalWebAPIHelper
                     {
                         chkdLstBxAllAttibutes.SetItemChecked(i, false);
                     }
+                    chkBxSelectAllAttributes.Checked = false;
                     return;
-                };
-
-
+                }
                 // if the value is star, all fields are selecteed
-                if (fieldsString == "*")
+                else if (fieldsString == "*")
                 {
+                    chkBxSelectAllAttributes.Checked = true;
                     for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
                     {
                         chkdLstBxAllAttibutes.SetItemChecked(i, true);
                     }
-                }
 
-                var fieldsArray = fieldsString.Split(',');
-                //chkdLstBxAllAttibutes.Items.Clear();
-                for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
+                }
+                else
                 {
-                    var found = fieldsArray.FirstOrDefault(x => x == ((WebAPIAttributeItemModel)(chkdLstBxAllAttibutes.Items[i])).WebAPIName);
-                    if (!string.IsNullOrEmpty(found))
+                    var fieldsArray = fieldsString.Split(',');
+                    //chkdLstBxAllAttibutes.Items.Clear();
+                    for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
                     {
-                        //chkdLstBxAllAttibutes.Items.Add(SelectedEntityInfo.AllAttributesList[i], true);
-                        chkdLstBxAllAttibutes.SetItemChecked(i, true);
-                    }
-                    else
-                    {
-                        chkdLstBxAllAttibutes.SetItemChecked(i, false);
+                        var found = fieldsArray.FirstOrDefault(x => x == ((WebAPIAttributeItemModel)(chkdLstBxAllAttibutes.Items[i])).WebAPIName);
+                        if (!string.IsNullOrEmpty(found))
+                        {
+                            chkdLstBxAllAttibutes.SetItemChecked(i, true);
+                        }
+                        else
+                        {
+                            chkdLstBxAllAttibutes.SetItemChecked(i, false);
+                        }
                     }
                 }
 
@@ -457,20 +455,15 @@ namespace PowerPortalWebAPIHelper
         }
         private void EntityAttributesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var changedAttribute = (sender as CheckedListBox).SelectedItem as WebAPIAttributeItemModel;
-            var selectedIndex = (sender as CheckedListBox).SelectedIndex;
-            if (chkdLstBxAllAttibutes.GetItemChecked(selectedIndex) == true)
+            if (chkdLstBxAllAttibutes.CheckedItems.Count == chkdLstBxAllAttibutes.Items.Count)
             {
-               // SelectedEntityInfo.SelectedAttributesList.Add(changedAttribute);
+                chkBxSelectAllAttributes.Checked = true;
             }
             else
             {
-                //if (SelectedEntityInfo.SelectedAttributesList.Find(x => x == changedAttribute) != null)
-                //{
-                //    SelectedEntityInfo.SelectedAttributesList.Remove(changedAttribute);
-                //}
+                ForceAllAttributeCheck = false;
+                chkBxSelectAllAttributes.Checked = false;
             }
-
         }
         private void txtAttributeFilter_TextChanged(object sender, EventArgs e)
         {
@@ -502,27 +495,25 @@ namespace PowerPortalWebAPIHelper
             //}
 
         }
+        private void chkBxSelectAllAttributes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ForceAllAttributeCheck)
+            {
+                for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
+                {
+                    chkdLstBxAllAttibutes.SetItemChecked(i, chkBxSelectAllAttributes.Checked);
+                }
+            }
+            else
+            {
+                ForceAllAttributeCheck = true;
+            }
 
+        }
 
         #endregion
 
         #region Snippets Management
-        private void btnGenerateSnippets_Click(object sender, EventArgs e)
-        {
-            PopulateSnippets();
-        }
-        private void PopulateSnippets()
-        {
-            rchTxtBxWrapperFunction.Clear();
-            rchTxtBxCreate.Clear();
-            rchTxtBxUpdate.Clear();
-            rchTxtBxDelete.Clear();
-            rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
-            //rchTxtBxCreate.Text = SnippetsGenerator.GenerateCreateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
-            //rchTxtBxUpdate.Text = SnippetsGenerator.GenerateUpdateSnippet(SelectedEntityInfo.CollectionName, SelectedEntityInfo.SelectedAttributesList);
-            //rchTxtBxDelete.Text = SnippetsGenerator.GenerateDeleteSnippets(SelectedEntityInfo.CollectionName);
-        }
-
         private void snippetsContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             try
@@ -540,12 +531,6 @@ namespace PowerPortalWebAPIHelper
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void tsbGenerateSnippets_Click(object sender, EventArgs e)
-        {
-            PopulateSnippets();
-        }
-
         private void InitializeOperationTypes()
         {
             cbBxOperationType.DataSource = OperationTypeInfo.LoadAvailableTypes();
@@ -554,7 +539,6 @@ namespace PowerPortalWebAPIHelper
             CbBxOperationType_SelectedIndexChanged(this, null);
 
         }
-
         private void CbBxOperationType_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selectedItem = cbBxOperationType.SelectedItem as OperationTypeInfo;
@@ -569,6 +553,19 @@ namespace PowerPortalWebAPIHelper
             }
 
             lblOperationMessage.Text = selectedItem.Message;
+        }
+        private void btnGenerateSnippet_Click(object sender, EventArgs e)
+        {
+            var selectedOperation = cbBxOperationType.SelectedItem as OperationTypeInfo;
+            var selectedAssociation = cbBxAssociateWith.SelectedItem as AssociationInfo;
+            if (selectedOperation != null)
+            {
+                APIOperationTypes operationType = selectedOperation.Type;
+                bool addFields = chBxUseSelectedFields.Checked;
+                List<WebAPIAttributeItemModel> selectedAttributes = chkdLstBxAllAttibutes.CheckedItems.Cast<WebAPIAttributeItemModel>().ToList();
+                string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, selectedAttributes,selectedOperation.Type, selectedAssociation, addFields);
+                rchTxtBoxOperation.Text = snippet;
+            }
         }
 
         #endregion
@@ -625,9 +622,9 @@ namespace PowerPortalWebAPIHelper
                         }
                         tsbWebsiteList.SelectedIndex = 0;
 
-                        // LoadInnerErrorTrackingSettings();
+                    // LoadInnerErrorTrackingSettings();
 
-                    }
+                }
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error while retrieving the websites from the environment.", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -655,8 +652,8 @@ namespace PowerPortalWebAPIHelper
                 Work = (worker, args) =>
                 {
 
-                    // Get sitesettings for this entity that are related to the web api setup
-                    QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
+                // Get sitesettings for this entity that are related to the web api setup
+                QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
                     siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
                     FilterExpression innerErrorFilter = new FilterExpression(LogicalOperator.And);
                     innerErrorFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, SelectedWebsiteInfo.Id);
@@ -715,8 +712,8 @@ namespace PowerPortalWebAPIHelper
                 Work = (worker, args) =>
                 {
 
-                    // Get sitesettings for this entity that are related to the web api setup
-                    QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
+                // Get sitesettings for this entity that are related to the web api setup
+                QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
                     siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
                     FilterExpression webApiNameFilter = new FilterExpression(LogicalOperator.Or);
                     webApiNameFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/{logicalName}/");
@@ -726,8 +723,8 @@ namespace PowerPortalWebAPIHelper
                     webApiWebsiteFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, SelectedWebsiteInfo.Id);
                     siteSettingsQuery.Criteria.AddFilter(webApiWebsiteFilter);
 
-                    //retreive the settings based on the above query
-                    var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
+                //retreive the settings based on the above query
+                var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
                     var innerErrorSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/error/innererror");
                     var enabledSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/enabled");
                     var attributeSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/fields");
@@ -852,30 +849,7 @@ namespace PowerPortalWebAPIHelper
 
         #endregion
 
-        private void btnGenerateSnippet_Click(object sender, EventArgs e)
-        {
 
-            var selectedOperation = cbBxOperationType.SelectedItem as OperationTypeInfo;
-            var selectedAssociation = cbBxAssociateWith.SelectedItem as AssociationInfo;
-            if (selectedOperation != null)
-            {
-                APIOperationTypes operationType = selectedOperation.Type;
-                bool addFields = chBxUseSelectedFields.Checked;
-                string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, selectedOperation.Type, selectedAssociation, addFields);
-                rchTxtBoxOperation.Text = snippet;
-            }
-
-        }
-
-        private void chkBxSelectAllAttributes_CheckedChanged(object sender, EventArgs e)
-        {
-            for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
-            {
-                chkdLstBxAllAttibutes.SetItemChecked(i, chkBxSelectAllAttributes.Checked);
-            }
-
-        }
     }
-
 
 }

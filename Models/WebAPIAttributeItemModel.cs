@@ -80,7 +80,7 @@ namespace PowerPortalWebAPIHelper.Models
         }
         public override string ToString()
         {
-            return $"{DisplayName} (Logical: {LogicalName}) ( WebAPI: {WebAPIName})";
+            return $"{DisplayName} (WebAPI Exposed Name: {WebAPIName}, Type: {DataType})";
         }
     }
 }
