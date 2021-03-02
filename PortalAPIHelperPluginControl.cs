@@ -226,16 +226,20 @@ namespace PowerPortalWebAPIHelper
                 // get the fields setting value;
                 StringBuilder fieldsSettingValue = new StringBuilder();
                 // if all are selected, set the setting value to "*"
-                if (chkdLstBxAllAttibutes.CheckedItems.Count == chkdLstBxAllAttibutes.Items.Count)
+                if (chkdLstBxAllAttibutes.CheckedItems.Count == 0)
+                {
+                    fieldsSettingValue.Append("");
+                }
+                else if (chkdLstBxAllAttibutes.CheckedItems.Count == chkdLstBxAllAttibutes.Items.Count)
                 {
                     fieldsSettingValue.Append("*");
                 }
                 else
                 {
-                    foreach (WebAPIAttributeItemModel checkedItemModel in SelectedEntityInfo.SelectedAttributesList)
+                    foreach (WebAPIAttributeItemModel checkedItemModel in chkdLstBxAllAttibutes.CheckedItems)
                     {
                         fieldsSettingValue.Append(checkedItemModel.WebAPIName);
-                        if (SelectedEntityInfo.SelectedAttributesList.IndexOf(checkedItemModel) == SelectedEntityInfo.SelectedAttributesList.Count - 1) break;
+                        if (chkdLstBxAllAttibutes.CheckedItems.IndexOf(checkedItemModel) == chkdLstBxAllAttibutes.CheckedItems.Count - 1) break;
                         fieldsSettingValue.Append(",");
                     }
 
@@ -410,7 +414,14 @@ namespace PowerPortalWebAPIHelper
             {
                 SelectedEntityInfo.WebAPIFieldsSiteSettingId = attributeSiteSettingEntity.Id;
                 var fieldsString = attributeSiteSettingEntity.GetAttributeValue<string>("adx_value");
-                if (string.IsNullOrEmpty(fieldsString)) return;
+                if (string.IsNullOrEmpty(fieldsString))
+                {
+                    for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
+                    {
+                        chkdLstBxAllAttibutes.SetItemChecked(i, false);
+                    }
+                    return;
+                };
 
 
                 // if the value is star, all fields are selecteed
@@ -423,14 +434,18 @@ namespace PowerPortalWebAPIHelper
                 }
 
                 var fieldsArray = fieldsString.Split(',');
-                SelectedEntityInfo.SelectedAttributesList.Clear();
+                //chkdLstBxAllAttibutes.Items.Clear();
                 for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
                 {
-                    var found = fieldsArray.FirstOrDefault(x => x == ((WebAPIAttributeItemModel)chkdLstBxAllAttibutes.Items[i]).WebAPIName);
-                    if (found != null)
+                    var found = fieldsArray.FirstOrDefault(x => x == ((WebAPIAttributeItemModel)(chkdLstBxAllAttibutes.Items[i])).WebAPIName);
+                    if (!string.IsNullOrEmpty(found))
                     {
+                        //chkdLstBxAllAttibutes.Items.Add(SelectedEntityInfo.AllAttributesList[i], true);
                         chkdLstBxAllAttibutes.SetItemChecked(i, true);
-                        SelectedEntityInfo.SelectedAttributesList.Add((WebAPIAttributeItemModel)chkdLstBxAllAttibutes.Items[i]);
+                    }
+                    else
+                    {
+                        chkdLstBxAllAttibutes.SetItemChecked(i, false);
                     }
                 }
 
@@ -446,45 +461,45 @@ namespace PowerPortalWebAPIHelper
             var selectedIndex = (sender as CheckedListBox).SelectedIndex;
             if (chkdLstBxAllAttibutes.GetItemChecked(selectedIndex) == true)
             {
-                SelectedEntityInfo.SelectedAttributesList.Add(changedAttribute);
+               // SelectedEntityInfo.SelectedAttributesList.Add(changedAttribute);
             }
             else
             {
-                if (SelectedEntityInfo.SelectedAttributesList.Find(x => x == changedAttribute) != null)
-                {
-                    SelectedEntityInfo.SelectedAttributesList.Remove(changedAttribute);
-                }
+                //if (SelectedEntityInfo.SelectedAttributesList.Find(x => x == changedAttribute) != null)
+                //{
+                //    SelectedEntityInfo.SelectedAttributesList.Remove(changedAttribute);
+                //}
             }
 
         }
         private void txtAttributeFilter_TextChanged(object sender, EventArgs e)
         {
 
-            string txt = txtAttributeFilter.Text;
-            if (txt == ATTRIBUTE_FILTER_HINT) return;
+            //string txt = txtAttributeFilter.Text;
+            //if (txt == ATTRIBUTE_FILTER_HINT) return;
 
-            var itemList = SelectedEntityInfo.AllAttributesList.Cast<WebAPIAttributeItemModel>().ToList();
-            if (itemList.Count > 0)
-            {
-                //clear the items from the list
-                chkdLstBxAllAttibutes.Items.Clear();
+            //var itemList = SelectedEntityInfo.AllAttributesList.Cast<WebAPIAttributeItemModel>().ToList();
+            //if (itemList.Count > 0)
+            //{
+            //    //clear the items from the list
+            //    chkdLstBxAllAttibutes.Items.Clear();
 
-                //filter the items and add them to the list
-                chkdLstBxAllAttibutes.Items.AddRange(
-                    itemList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
+            //    //filter the items and add them to the list
+            //    chkdLstBxAllAttibutes.Items.AddRange(
+            //        itemList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
 
-                foreach (WebAPIAttributeItemModel item in SelectedEntityInfo.SelectedAttributesList)
-                {
-                    if (chkdLstBxAllAttibutes.Items.IndexOf(item) >= 0)
-                        chkdLstBxAllAttibutes.SetItemChecked(chkdLstBxAllAttibutes.Items.IndexOf(item), true);
+            //    foreach (WebAPIAttributeItemModel item in chkdLstBxAllAttibutes.Items)
+            //    {
+            //        if (chkdLstBxAllAttibutes.Items.IndexOf(item) >= 0)
+            //            chkdLstBxAllAttibutes.SetItemChecked(chkdLstBxAllAttibutes.Items.IndexOf(item), true);
 
-                }
+            //    }
 
-            }
-            else
-            {
-                chkdLstBxAllAttibutes.Items.AddRange(itemList.ToArray());
-            }
+            //}
+            //else
+            //{
+            //    chkdLstBxAllAttibutes.Items.AddRange(itemList.ToArray());
+            //}
 
         }
 
