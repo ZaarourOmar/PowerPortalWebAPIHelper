@@ -8,6 +8,7 @@ using PowerPortalWebAPIHelper.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -467,31 +468,34 @@ namespace PowerPortalWebAPIHelper
         }
         private void txtAttributeFilter_TextChanged(object sender, EventArgs e)
         {
+            //TBD
+            //string searchText = txtAttributeFilter.Text;
+            //if (searchText == ATTRIBUTE_FILTER_HINT) return;
 
-            //string txt = txtAttributeFilter.Text;
-            //if (txt == ATTRIBUTE_FILTER_HINT) return;
-
-            //var itemList = SelectedEntityInfo.AllAttributesList.Cast<WebAPIAttributeItemModel>().ToList();
-            //if (itemList.Count > 0)
+            //var allItemList = SelectedEntityInfo.AllAttributesList.Cast<WebAPIAttributeItemModel>().ToList();
+            //var checkedItemsList = chkdLstBxAllAttibutes.CheckedItems.Cast<WebAPIAttributeItemModel>().ToList();
+            //if (allItemList.Count > 0)
             //{
             //    //clear the items from the list
             //    chkdLstBxAllAttibutes.Items.Clear();
 
             //    //filter the items and add them to the list
             //    chkdLstBxAllAttibutes.Items.AddRange(
-            //        itemList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
+            //        allItemList.Where(i => i.DisplayName.ToLower().Contains(searchText.ToLower()) || i.WebAPIName.ToLower().Contains(searchText.ToLower())).ToArray());
 
-            //    foreach (WebAPIAttributeItemModel item in chkdLstBxAllAttibutes.Items)
+            //    foreach (WebAPIAttributeItemModel item in checkedItemsList)
             //    {
-            //        if (chkdLstBxAllAttibutes.Items.IndexOf(item) >= 0)
-            //            chkdLstBxAllAttibutes.SetItemChecked(chkdLstBxAllAttibutes.Items.IndexOf(item), true);
-
+            //        int itemIndex = chkdLstBxAllAttibutes.Items.Cast<WebAPIAttributeItemModel>().ToList().FindIndex(x => x.WebAPIName == item.WebAPIName);
+            //        if (itemIndex >= 0 &&itemIndex<allItemList.Count)
+            //        {
+            //            chkdLstBxAllAttibutes.SetItemChecked(itemIndex, true);
+            //        }
             //    }
 
             //}
             //else
             //{
-            //    chkdLstBxAllAttibutes.Items.AddRange(itemList.ToArray());
+            //    chkdLstBxAllAttibutes.Items.AddRange(allItemList.ToArray());
             //}
 
         }
@@ -556,6 +560,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void btnGenerateSnippet_Click(object sender, EventArgs e)
         {
+            rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
             var selectedOperation = cbBxOperationType.SelectedItem as OperationTypeInfo;
             var selectedAssociation = cbBxAssociateWith.SelectedItem as AssociationInfo;
             if (selectedOperation != null)
@@ -563,7 +568,7 @@ namespace PowerPortalWebAPIHelper
                 APIOperationTypes operationType = selectedOperation.Type;
                 bool addFields = chBxUseSelectedFields.Checked;
                 List<WebAPIAttributeItemModel> selectedAttributes = chkdLstBxAllAttibutes.CheckedItems.Cast<WebAPIAttributeItemModel>().ToList();
-                string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, selectedAttributes,selectedOperation.Type, selectedAssociation, addFields);
+                string snippet = SnippetsGenerator.GenerateSnippet(SelectedEntityInfo, selectedAttributes, selectedOperation.Type, selectedAssociation, addFields);
                 rchTxtBoxOperation.Text = snippet;
             }
         }
@@ -622,9 +627,9 @@ namespace PowerPortalWebAPIHelper
                         }
                         tsbWebsiteList.SelectedIndex = 0;
 
-                    // LoadInnerErrorTrackingSettings();
+                        // LoadInnerErrorTrackingSettings();
 
-                }
+                    }
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error while retrieving the websites from the environment.", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -652,8 +657,8 @@ namespace PowerPortalWebAPIHelper
                 Work = (worker, args) =>
                 {
 
-                // Get sitesettings for this entity that are related to the web api setup
-                QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
+                    // Get sitesettings for this entity that are related to the web api setup
+                    QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
                     siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
                     FilterExpression innerErrorFilter = new FilterExpression(LogicalOperator.And);
                     innerErrorFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, SelectedWebsiteInfo.Id);
@@ -712,8 +717,8 @@ namespace PowerPortalWebAPIHelper
                 Work = (worker, args) =>
                 {
 
-                // Get sitesettings for this entity that are related to the web api setup
-                QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
+                    // Get sitesettings for this entity that are related to the web api setup
+                    QueryExpression siteSettingsQuery = new QueryExpression("adx_sitesetting");
                     siteSettingsQuery.ColumnSet = new ColumnSet("adx_name", "adx_value");
                     FilterExpression webApiNameFilter = new FilterExpression(LogicalOperator.Or);
                     webApiNameFilter.AddCondition("adx_name", ConditionOperator.BeginsWith, $"Webapi/{logicalName}/");
@@ -723,8 +728,8 @@ namespace PowerPortalWebAPIHelper
                     webApiWebsiteFilter.AddCondition("adx_websiteid", ConditionOperator.Equal, SelectedWebsiteInfo.Id);
                     siteSettingsQuery.Criteria.AddFilter(webApiWebsiteFilter);
 
-                //retreive the settings based on the above query
-                var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
+                    //retreive the settings based on the above query
+                    var siteSettingsRecords = Service.RetrieveMultiple(siteSettingsQuery).Entities;
                     var innerErrorSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/error/innererror");
                     var enabledSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/enabled");
                     var attributeSiteSettingEntity = siteSettingsRecords.FirstOrDefault(x => x.GetAttributeValue<string>("adx_name") == $"Webapi/{logicalName}/fields");
@@ -747,7 +752,7 @@ namespace PowerPortalWebAPIHelper
                     InitializeEnabledCheckBoxBasedOnSiteSetting(results.Item2);
                     InitializeAttributesBasedOnSiteSetting(results.Item3);
                     ToggleSelectedEntityToolbarComponents(true);
-
+                    CheckEntityPermissions(logicalName);
                 }
             });
 
@@ -849,7 +854,46 @@ namespace PowerPortalWebAPIHelper
 
         #endregion
 
+        #region Entity Permissions
+        private void CheckEntityPermissions(string entityLogicalName)
+        {
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Checking Entity Permissions",
+                Work = (worker, args) =>
+                {
 
+                    // Get sitesettings for this entity that are related to the web api setup
+                    QueryExpression entityPermissionsQuery = new QueryExpression("adx_entitypermission");
+                    entityPermissionsQuery.ColumnSet = new ColumnSet(new string[]{ "adx_entitypermissionid", "adx_entitylogicalname" });
+                    entityPermissionsQuery.Criteria.AddCondition("adx_entitylogicalname", ConditionOperator.Equal, entityLogicalName);
+                    var entityPermissionsResult = Service.RetrieveMultiple(entityPermissionsQuery);
+                    args.Result = entityPermissionsResult.Entities.Count;
+
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    int entitPermissionCount = (int)args.Result;
+                    if (entitPermissionCount == 0)
+                    {
+                        lblEntityPermissionsNotification.ForeColor = Color.Red;
+                        lblEntityPermissionsNotification.Text = "The selected entity has no related entity permissions. Make sure to add the proper entity permission for the web api calls to work.";
+                    }
+                    else
+                    {
+                        lblEntityPermissionsNotification.ForeColor = Color.Green;
+                        lblEntityPermissionsNotification.Text = "An entity permission is found for the selected entity. Make sure that the entity permission allows the required Web API operation";
+                    }
+
+                }
+            });
+        }
+        #endregion
     }
 
 }
