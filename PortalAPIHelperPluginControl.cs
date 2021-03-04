@@ -24,7 +24,8 @@ namespace PowerPortalWebAPIHelper
         private Settings mySettings;
         private EntityItemModel SelectedEntityInfo { get; set; } = new EntityItemModel();
         private List<WebsiteModel> Websites = new List<WebsiteModel>();
-        private bool ForceAllAttributeCheck = true;
+        // a flag to control the select all atribute checkbox
+        private bool ForceAllAttributeCheck = false;
         public List<EntityItemModel> AllEntitiesList { get; set; } = new List<EntityItemModel>();
         private WebsiteModel SelectedWebsiteInfo { get; set; } = new WebsiteModel();
         public string RepositoryName => "PowerPortalWebAPIHelper";
@@ -91,7 +92,7 @@ namespace PowerPortalWebAPIHelper
         private void tsbHowTo_Click(object sender, EventArgs e)
         {
             string howToHelpString = "";
-            howToHelpString = "This tool quickly enables/disables Portal WebAPI capability for entities and their attributes. Simply ,select the entity you want to enable/disable and select all the attributes you wish to expose through the web api and hit save! In addition, simple Create/Update/Delete Javascript snippets can be generated using this tool. For more detailed setup and usage info of the web api in the portals, please visit https://docs.microsoft.com/en-us/powerapps/maker/portals/web-api-overview ";
+            howToHelpString = "This tool quickly enables/disables Portal WebAPI capability for entities and their attributes. Simpley ,select the entity you want to enable/disable and select all the attributes you wish to expose through the web api and hit save! In addition, simple Create/Update/Delete Javascript snippets can be generated using this tool along with the Ajax Wrapper that you need to execute those calls. For more detailed setup and usage info of the portal Web Api, please visit https://docs.microsoft.com/en-us/powerapps/maker/portals/web-api-overview.";
             MessageBox.Show(howToHelpString, "How to", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -139,7 +140,7 @@ namespace PowerPortalWebAPIHelper
                         }
 
                         ToggleWebsiteToolbarComponents(true);
-
+                        entitiesSplitContainer.Visible = true;
                     }
                     else
                     {
@@ -154,12 +155,12 @@ namespace PowerPortalWebAPIHelper
         private void ResetEntityInformationPanel()
         {
             chkdLstBxAllAttibutes.Items.Clear();
-            EntityInformationContainer.Visible = false;
-            SelectedEntityInfo = new EntityItemModel();
+            EntityInformationSplitContainer.Visible = false;
+           // SelectedEntityInfo = new EntityItemModel();
         }
         private void ShowEntityInformationPanel()
         {
-            EntityInformationContainer.Visible = true;
+            EntityInformationSplitContainer.Visible = true;
             tsbSwitchInnerError.Visible = true;
         }
         private void InitializeEnabledCheckBoxBasedOnSiteSetting(Entity enabledSiteSettingEntity)
@@ -290,13 +291,11 @@ namespace PowerPortalWebAPIHelper
         private void AllEntitiesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ResetEntityInformationPanel();
-            EntityItemModel selectedEntity = lstBxAllEntities.SelectedItem as EntityItemModel;
-            if (selectedEntity != null)
+            SelectedEntityInfo = lstBxAllEntities.SelectedItem as EntityItemModel;
+            if (SelectedEntityInfo != null)
             {
-                SelectedEntityInfo = selectedEntity;
                 ExecuteMethod(LoadSelectedEntityAttributes, SelectedEntityInfo.LogicalName);
-                ShowEntityInformationPanel();
-                txtAttributeFilter.Init(ATTRIBUTE_FILTER_HINT);
+                //ShowEntityInformationPanel();
                 txtAllEntitiesFilter.Init(ENTITY_FILTER_HINT);
 
                 // find possible associations for snippet generation
@@ -306,9 +305,7 @@ namespace PowerPortalWebAPIHelper
                     cbBxAssociateWith.Items.Add(new AssociationInfo(mToMRelationsip));
                 }
 
-                // populate the operation type combobox
-                InitializeOperationTypes();
-
+               
 
             }
 
@@ -331,11 +328,8 @@ namespace PowerPortalWebAPIHelper
         #region Attribute Management
         private void LoadSelectedEntityAttributes(string logicalName)
         {
-            txtAttributeFilter.Text = "";
-            SelectedEntityInfo.AllAttributesList.Clear();
-            chkdLstBxAllAttibutes.Items.Clear();
+            ResetEntityInformationPanel();
             Dictionary<string, string> relatedEntitiesPluralNames = new Dictionary<string, string>();
-
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Getting entity attributes",
@@ -465,6 +459,7 @@ namespace PowerPortalWebAPIHelper
                 ForceAllAttributeCheck = false;
                 chkBxSelectAllAttributes.Checked = false;
             }
+            UpdateOrGenerateSnippets();
         }
         private void txtAttributeFilter_TextChanged(object sender, EventArgs e)
         {
@@ -501,6 +496,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void chkBxSelectAllAttributes_CheckedChanged(object sender, EventArgs e)
         {
+            
             if (ForceAllAttributeCheck)
             {
                 for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
@@ -512,7 +508,7 @@ namespace PowerPortalWebAPIHelper
             {
                 ForceAllAttributeCheck = true;
             }
-
+            UpdateOrGenerateSnippets();
         }
 
         #endregion
@@ -557,8 +553,10 @@ namespace PowerPortalWebAPIHelper
             }
 
             lblOperationMessage.Text = selectedItem.Message;
+
+            UpdateOrGenerateSnippets();
         }
-        private void btnGenerateSnippet_Click(object sender, EventArgs e)
+        private void UpdateOrGenerateSnippets()
         {
             rchTxtBxWrapperFunction.Text = SnippetsGenerator.GenerateWrapperFunction();
             var selectedOperation = cbBxOperationType.SelectedItem as OperationTypeInfo;
@@ -753,6 +751,10 @@ namespace PowerPortalWebAPIHelper
                     InitializeAttributesBasedOnSiteSetting(results.Item3);
                     ToggleSelectedEntityToolbarComponents(true);
                     CheckEntityPermissions(logicalName);
+                    ShowEntityInformationPanel();
+                    // populate the operation type combobox
+                    InitializeOperationTypes();
+
                 }
             });
 

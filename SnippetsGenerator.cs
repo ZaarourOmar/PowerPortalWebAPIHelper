@@ -63,58 +63,67 @@ namespace PowerPortalWebAPIHelper
 
                 switch (attribute.DataType)
                 {
+
+                    case AttributeTypeCode.Boolean:
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + ":false");
+                        break;
                     case AttributeTypeCode.Integer:
                     case AttributeTypeCode.BigInt:
                     case AttributeTypeCode.Picklist:
                     case AttributeTypeCode.State:
                     case AttributeTypeCode.Status:
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":" + 0 + ",");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":0");
                         break;
                     case AttributeTypeCode.Double:
                     case AttributeTypeCode.Decimal:
                     case AttributeTypeCode.Money:
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":" + 0.0 + ",");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":0.0");
                         break;
-
                     case AttributeTypeCode.Memo:
                     case AttributeTypeCode.String:
 
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"Some String Value\",");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":\"Some String Value\"");
                         break;
                     case AttributeTypeCode.DateTime:
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"Some Date Value\",");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":\"Some Date Value\"");
 
                         break;
                     case AttributeTypeCode.Uniqueidentifier:
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"" + Guid.Empty.ToString() + "\",");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":\"" + Guid.Empty.ToString() + "\"");
                         break;
-
                     case AttributeTypeCode.Lookup:
                     case AttributeTypeCode.Customer:
 
                         if (operationType == APIOperationTypes.BasicUpdate || operationType == APIOperationTypes.UpdateSingle)
                         {
                             var relatedEntityColelcitonName = attribute.RelatedEntityCollectionName;
-                            jsonBuilder.AppendLine("\t\t\"" + attribute.WebAPIName + ".odata.bind\":portalurl+\"/_api/"+ relatedEntityColelcitonName + "(RELATED ENTITY GUID HERE)" +"\",");
+                            jsonBuilder.Append("\t\t\"" + attribute.WebAPIName + ".odata.bind\":portalurl+\"/_api/"+ relatedEntityColelcitonName + "(11111111-1111-1111-1111-111111111111)" + "\"");
                         }
                         else
                         {
                             jsonBuilder.AppendLine("\t\t\"" + attribute.WebAPIName + "\":");
                             jsonBuilder.AppendLine("\t\t{");
-                            jsonBuilder.AppendLine("\t\t\t //Add related entity fields");
-                            jsonBuilder.AppendLine("\t\t},");
+                            jsonBuilder.AppendLine("\t\t\t //Add related entity fields. Make sure to add the required fields for the related entity. Also, make sure that the related entity is enabled for Web API and has proper entity permissions");
+                            jsonBuilder.Append("\t\t}");
                         }
                        
 
                         break;
-
+                    case AttributeTypeCode.Virtual:
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":\"This is a virtual field. An example of this field is entity image on the contact entity and it needs to be a base64 string. For other virtual fields values, please check Microsoft documentation.\"");
+                        break;
                     default:
-                        jsonBuilder.AppendLine("\t\t\"" + attribute.LogicalName + "\":\"Some String Value\",");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":\"Unknown field type. please check Microsoft documentation for the proper format of the this field value.\"");
                         break;
                 }
 
-
+                if (selectedAttribute.IndexOf(attribute) < selectedAttribute.Count - 1)
+                {
+                    jsonBuilder.AppendLine(",");
+                }
+               
             }
+            jsonBuilder.AppendLine("");
             return jsonBuilder.ToString();
         }
 
@@ -125,13 +134,13 @@ namespace PowerPortalWebAPIHelper
                 case APIOperationTypes.BasicCreate:
                     return GenerateBasicCreateSnippet(selectedEntityInfo, selectedAttributes, opType, association, addFields);
                 case APIOperationTypes.UpdateSingle:
-                    return GenerateUpdateSingleSnippet(selectedEntityInfo,selectedAttributes);
+                    return GenerateUpdateSingleSnippet(selectedEntityInfo,selectedAttributes, addFields);
                 case APIOperationTypes.BasicUpdate:
                     return GenerateBasicUpdateSnippet(selectedEntityInfo, selectedAttributes, opType, association, addFields);
                 case APIOperationTypes.BasicDelete:
                     return GenerateBasicDeleteSnippet(selectedEntityInfo, selectedAttributes);
                 case APIOperationTypes.DeleteSingle:
-                    return GenerateDeleteSingleSnippet(selectedEntityInfo, selectedAttributes);
+                    return GenerateDeleteSingleSnippet(selectedEntityInfo, selectedAttributes, addFields);
                 case APIOperationTypes.AssociateDisassociate:
 
                     break;
@@ -142,13 +151,15 @@ namespace PowerPortalWebAPIHelper
             return "";
         }
 
-        private static string GenerateDeleteSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes)
+        private static string GenerateDeleteSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes,bool addFields)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
             snippetTextBuilder.AppendLine("// This is a sample delete snippet to delete a single property using the DELETE operator. Use this when you want to clear out a single property value and not the whole record. You need to specify the ID of the record between the brackets and the logical name of the propery");
+            string sampleAttribute = addFields && selectedAttributes.Count > 0 ? selectedAttributes[0].WebAPIName : "attribute_logical_name";
+
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(YOUR_GUID_HERE)/ATTRIBUTE_LOGICAL_NAME\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)/" + sampleAttribute + "\",");
             snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
             snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
             snippetTextBuilder.AppendLine("\t\tconsole.log(res)");
@@ -166,7 +177,7 @@ namespace PowerPortalWebAPIHelper
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(YOUR_GUID_HERE)\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)\",");
             snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
             snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
             snippetTextBuilder.AppendLine("\t\tconsole.log(res)");
@@ -194,7 +205,7 @@ namespace PowerPortalWebAPIHelper
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"PATCH\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(YOUR_GUID_HERE)\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)\",");
             snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
             snippetTextBuilder.AppendLine("\tdata: JSON.stringify(dataObject),");
             snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
@@ -205,15 +216,15 @@ namespace PowerPortalWebAPIHelper
 
             return snippetTextBuilder.ToString();
         }
-        private static string GenerateUpdateSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes)
+        private static string GenerateUpdateSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes,bool addFields)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-
-            snippetTextBuilder.AppendLine("// This is a sample single field update snippet using the PUT operator. You need to specify the ID of the record being updated, the logical name of the attribute and the value of the targeted attribute");
+            string sampleAttribute = addFields && selectedAttributes.Count > 0 ? selectedAttributes[0].WebAPIName:"attribute_logical_name";
+            snippetTextBuilder.AppendLine("// This is a sample single field update snippet using the PUT operator. You need to specify the ID of the record being updated, the logical name of the attribute and the value of the targeted attribute. As an example, the first selected attribute is added for you. ");
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"PUT\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(YOUR_GUID_HERE)/ATTRIBUTE_LOGICAL_NAME_HERE\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)/" + sampleAttribute + "\",");
             snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
             snippetTextBuilder.AppendLine("\tdata: JSON.stringify({");
             snippetTextBuilder.AppendLine("\t\t\"value\":\"NEW VALUE HERE\"");
