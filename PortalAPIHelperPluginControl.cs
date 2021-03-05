@@ -94,9 +94,7 @@ namespace PowerPortalWebAPIHelper
             //clear previous lists
             Model?.ClearEntities();
             lstBxAllEntities.DataSource = Model.AllEntitiesList;
-            //lstBxAllEntities.Items.Clear();
             txtAllEntitiesFilter.Text = "";
-
             // load entity list
             WorkAsync(new WorkAsyncInfo
             {
@@ -109,7 +107,6 @@ namespace PowerPortalWebAPIHelper
                         EntityFilters = EntityFilters.Entity | EntityFilters.Relationships
                     };
                     RetrieveAllEntitiesResponse retrieveAllEntityResponse = (RetrieveAllEntitiesResponse)Service.Execute(retrieveAllEntityRequest);
-
 
                     args.Result = retrieveAllEntityResponse.EntityMetadata;
                 },
@@ -142,13 +139,11 @@ namespace PowerPortalWebAPIHelper
                         MessageBox.Show("Error while connecting to the environment.");
                     }
                     LoadInnerErrorTrackingSettings();
-
                 }
             });
         }
         private void ResetEntityInformationPanel()
         {
-            chkdLstBxAllAttibutes.Items.Clear();
             EntityInformationSplitContainer.Visible = false;
         }
         private void ShowEntityInformationPanel()
@@ -207,7 +202,6 @@ namespace PowerPortalWebAPIHelper
             {
                 bool isEnabled = chkBxIsWebAPIEnabled.Checked;
 
-
                 if (Model.WebAPIEnabledSiteSettingId == Guid.Empty)
                 {
                     CreateSiteSetting(WebAPISiteSettingTypes.EnabledSetting, Model.SelectedEntityLogicalName, isEnabled.ToString().ToLower(), Model.SelectedWebSiteId);
@@ -261,18 +255,11 @@ namespace PowerPortalWebAPIHelper
             var filteredEntities = Model.AllEntitiesList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToList();
             if (!string.IsNullOrEmpty(txt))
             {
-                //clear the items from the list
-                //lstBxAllEntities.Items.Clear();
                 lstBxAllEntities.DataSource = filteredEntities;
-                //filter the items and add them to the list
-                //lstBxAllEntities.Items.AddRange(
-                //    allEntities.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
             }
             else
             {
                 lstBxAllEntities.DataSource = allEntities;
-
-                //lstBxAllEntities.Items.AddRange(allEntities.ToArray());
             }
 
             lstBxAllEntities.SelectedIndexChanged += AllEntitiesListBox_SelectedIndexChanged;
@@ -296,7 +283,6 @@ namespace PowerPortalWebAPIHelper
             if (Model.SelectedEntityInfo != null)
             {
                 ExecuteMethod(LoadSelectedEntityAttributes, Model.SelectedEntityLogicalName);
-                //ShowEntityInformationPanel();
                 // find possible associations for snippet generation
                 foreach (var mToMRelationsip in Model.SelectedEntityMtoMRelationships)
                 {
@@ -325,6 +311,7 @@ namespace PowerPortalWebAPIHelper
         private void LoadSelectedEntityAttributes(string logicalName)
         {
             ResetEntityInformationPanel();
+            ((ListBox)chkdLstBxAllAttibutes).DataSource = Model.SelectedEntityAttributes;
             Dictionary<string, string> relatedEntitiesPluralNames = new Dictionary<string, string>();
             WorkAsync(new WorkAsyncInfo
             {
@@ -338,7 +325,6 @@ namespace PowerPortalWebAPIHelper
                     entityRequest.RetrieveAsIfPublished = true;
                     entityRequest.EntityFilters = EntityFilters.All;
                     var response = (RetrieveEntityResponse)Service.Execute(entityRequest);
-
 
                     foreach (var mto1Relationship in response.EntityMetadata.ManyToOneRelationships)
                     {
@@ -376,15 +362,12 @@ namespace PowerPortalWebAPIHelper
                             WebAPIAttributeItemModel contactAttribute = new WebAPIAttributeItemModel(attribute, Model.SelectedEntityInfo, true, CustomerType.Contact);
                             WebAPIAttributeItemModel accountAttribute = new WebAPIAttributeItemModel(attribute, Model.SelectedEntityInfo, true, CustomerType.Account);
                             Model.AddAttribute(contactAttribute);
-                            chkdLstBxAllAttibutes.Items.Add(contactAttribute);
                             Model.AddAttribute(accountAttribute);
-                            chkdLstBxAllAttibutes.Items.Add(accountAttribute);
                         }
                         else
                         {
                             WebAPIAttributeItemModel newAttribute = new WebAPIAttributeItemModel(attribute, Model.SelectedEntityInfo);
                             Model.AddAttribute(newAttribute);
-                            chkdLstBxAllAttibutes.Items.Add(newAttribute);
                         }
 
                     }
@@ -423,7 +406,6 @@ namespace PowerPortalWebAPIHelper
                 else
                 {
                     var fieldsArray = fieldsString.Split(',');
-                    //chkdLstBxAllAttibutes.Items.Clear();
                     for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
                     {
                         var found = fieldsArray.FirstOrDefault(x => x == ((WebAPIAttributeItemModel)(chkdLstBxAllAttibutes.Items[i])).WebAPIName);
@@ -587,8 +569,6 @@ namespace PowerPortalWebAPIHelper
                         }
                         tsbWebsiteList.SelectedIndex = 0;
 
-                        // LoadInnerErrorTrackingSettings();
-
                     }
                     if (args.Error != null)
                     {
@@ -668,7 +648,6 @@ namespace PowerPortalWebAPIHelper
 
         private void LoadEntityWebAPISettings(string logicalName)
         {
-
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Getting site settings for the selected entity",
@@ -717,11 +696,9 @@ namespace PowerPortalWebAPIHelper
 
                 }
             });
-
         }
         private void CreateSiteSetting(WebAPISiteSettingTypes settingType, string entityLogicalName, string value, Guid websiteId)
         {
-
             WorkAsync(new WorkAsyncInfo
             {
                 Message = $"Creating site setting",
@@ -763,11 +740,9 @@ namespace PowerPortalWebAPIHelper
 
                 }
             });
-
         }
         private void UpdateSiteSetting(WebAPISiteSettingTypes settingType, Guid settingId, string entityLogicalName, string value, Guid websiteId)
         {
-
             WorkAsync(new WorkAsyncInfo
             {
                 Message = $"Updating site setting",
@@ -806,7 +781,6 @@ namespace PowerPortalWebAPIHelper
 
                 }
             });
-
         }
         #endregion
 
@@ -856,14 +830,13 @@ namespace PowerPortalWebAPIHelper
         private void btnCreateEntityPermission_Click(object sender, EventArgs e)
         {
 
-            if(Model==null || Model.SelectedEntityInfo==null || Model.SelectedWebsiteInfo == null)
+            if (Model == null || Model.SelectedEntityInfo == null || Model.SelectedWebsiteInfo == null)
             {
                 MessageBox.Show(Constants.UNABLE_TO_CREATE_ENTITY_PERMISSION, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (MessageBox.Show(Constants.CREATE_ENTITY_PERMISSION_DIALOG, "Information", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
-
                 WorkAsync(new WorkAsyncInfo
                 {
                     Message = "Creating a global entity permission for the administrator webrole",
@@ -875,7 +848,7 @@ namespace PowerPortalWebAPIHelper
                         authenticatedUserWebRoleFilter.AddCondition("adx_name", ConditionOperator.Equal, Constants.WEBROLE_ADMIN_NAME);
                         authenticatedUserWebRoleFilter.AddCondition("adx_webroleid", ConditionOperator.Equal, Constants.WEBROLE_ADMIN_ID);
                         webRolesQuery.Criteria.AddFilter(authenticatedUserWebRoleFilter);
-                        webRolesQuery.Criteria.AddCondition("statecode", ConditionOperator.Equal,0); // only active webroles
+                        webRolesQuery.Criteria.AddCondition("statecode", ConditionOperator.Equal, 0); // only active webroles
 
                         var webRolesResult = Service.RetrieveMultiple(webRolesQuery);
                         Guid webRoleId = Guid.Empty;
@@ -886,7 +859,7 @@ namespace PowerPortalWebAPIHelper
                         }
                         else
                         {
-                            MessageBox.Show(Constants.WEBROLE_ADMIN_NOTFOUND,"Warning",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                            MessageBox.Show(Constants.WEBROLE_ADMIN_NOTFOUND, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
 
                         string entityPermissionEntityName = "adx_entitypermission";
@@ -909,7 +882,7 @@ namespace PowerPortalWebAPIHelper
                         newEntityPermission.Attributes.Add("statecode", 0);// only active permisions
 
                         Guid recordId = Service.Create(newEntityPermission);
-                        if (recordId != Guid.Empty && webRoleId!=Guid.Empty)
+                        if (recordId != Guid.Empty && webRoleId != Guid.Empty)
                         {
                             AssociateRequest associateRequest = new AssociateRequest();
                             associateRequest.Relationship = new Relationship("adx_entitypermission_webrole");
@@ -933,8 +906,6 @@ namespace PowerPortalWebAPIHelper
 
                     }
                 });
-
-
             }
         }
     }

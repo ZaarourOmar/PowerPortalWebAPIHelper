@@ -15,6 +15,7 @@ namespace PowerPortalWebAPIHelper.Models
         // a flag to control the select all atribute checkbox
         public bool ForceAllAttributeCheck = false;
         public BindingList<EntityItemModel> AllEntitiesList { get; private set; } = new BindingList<EntityItemModel>();
+        public BindingList<WebAPIAttributeItemModel> SelectedEntityAttributes { get { return SelectedEntityInfo?.AllAttributesList; } }
         public WebsiteModel SelectedWebsiteInfo { get; private set; } = new WebsiteModel();
         public Guid WebAPIEnabledSiteSettingId
         {
@@ -102,7 +103,7 @@ namespace PowerPortalWebAPIHelper.Models
 
         public void AddAttribute(WebAPIAttributeItemModel attribute)
         {
-            SelectedEntityInfo?.AllAttributesList?.Add(attribute);
+            SelectedEntityAttributes?.Add(attribute);
         }
 
         public void UpdateWebsite(WebsiteModel selectedWebsite)

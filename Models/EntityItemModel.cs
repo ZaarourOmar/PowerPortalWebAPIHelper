@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace PowerPortalWebAPIHelper.Models
         public Guid WebAPIFieldsSiteSettingId { get; set; }
 
        // public List<WebAPIAttributeItemModel> SelectedAttributesList { get; set; } = new List<WebAPIAttributeItemModel>();
-        public List<WebAPIAttributeItemModel> AllAttributesList { get; set; } = new List<WebAPIAttributeItemModel>();
+        public BindingList<WebAPIAttributeItemModel> AllAttributesList { get; set; } = new BindingList<WebAPIAttributeItemModel>();
 
         public override string ToString()
         {
