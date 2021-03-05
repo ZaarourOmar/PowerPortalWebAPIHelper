@@ -52,6 +52,8 @@ namespace PowerPortalWebAPIHelper
             this.grpBxEntityAttributes = new System.Windows.Forms.GroupBox();
             this.chkdLstBxAllAttibutes = new System.Windows.Forms.CheckedListBox();
             this.grpBoxEntityInformation = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnCreateEntityPermission = new System.Windows.Forms.Button();
             this.lblEntityPermissionsNotification = new System.Windows.Forms.Label();
             this.chkBxSelectAllAttributes = new System.Windows.Forms.CheckBox();
             this.chkBxIsWebAPIEnabled = new System.Windows.Forms.CheckBox();
@@ -71,8 +73,6 @@ namespace PowerPortalWebAPIHelper
             this.snippetsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.tabWrapperFunction = new System.Windows.Forms.TabPage();
-            this.btnCreateEntityPermission = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.rchTxtBoxOperation = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBxWrapperFunction = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.toolStripMenu.SuspendLayout();
@@ -90,6 +90,7 @@ namespace PowerPortalWebAPIHelper
             this.EntityInformationSplitContainer.SuspendLayout();
             this.grpBxEntityAttributes.SuspendLayout();
             this.grpBoxEntityInformation.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tabControlSnippets.SuspendLayout();
             this.tabOperation.SuspendLayout();
@@ -105,7 +106,6 @@ namespace PowerPortalWebAPIHelper
             this.grpBxAssociationEntity.SuspendLayout();
             this.snippetsContextMenu.SuspendLayout();
             this.tabWrapperFunction.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -329,6 +329,28 @@ namespace PowerPortalWebAPIHelper
             this.grpBoxEntityInformation.TabStop = false;
             this.grpBoxEntityInformation.Text = "Entity Information";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnCreateEntityPermission);
+            this.panel1.Controls.Add(this.lblEntityPermissionsNotification);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(168, 16);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(249, 108);
+            this.panel1.TabIndex = 7;
+            // 
+            // btnCreateEntityPermission
+            // 
+            this.btnCreateEntityPermission.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnCreateEntityPermission.Location = new System.Drawing.Point(0, 85);
+            this.btnCreateEntityPermission.Name = "btnCreateEntityPermission";
+            this.btnCreateEntityPermission.Size = new System.Drawing.Size(249, 23);
+            this.btnCreateEntityPermission.TabIndex = 8;
+            this.btnCreateEntityPermission.Text = "Create one now?";
+            this.btnCreateEntityPermission.UseVisualStyleBackColor = true;
+            this.btnCreateEntityPermission.Visible = false;
+            this.btnCreateEntityPermission.Click += new System.EventHandler(this.btnCreateEntityPermission_Click);
+            // 
             // lblEntityPermissionsNotification
             // 
             this.lblEntityPermissionsNotification.Dock = System.Windows.Forms.DockStyle.Top;
@@ -411,7 +433,7 @@ namespace PowerPortalWebAPIHelper
             // 
             this.splitContainerOperation.Panel2.Controls.Add(this.rchTxtBoxOperation);
             this.splitContainerOperation.Size = new System.Drawing.Size(472, 483);
-            this.splitContainerOperation.SplitterDistance = 250;
+            this.splitContainerOperation.SplitterDistance = 173;
             this.splitContainerOperation.SplitterWidth = 8;
             this.splitContainerOperation.TabIndex = 2;
             // 
@@ -421,7 +443,7 @@ namespace PowerPortalWebAPIHelper
             this.groupBoxSnippetSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxSnippetSettings.Location = new System.Drawing.Point(0, 0);
             this.groupBoxSnippetSettings.Name = "groupBoxSnippetSettings";
-            this.groupBoxSnippetSettings.Size = new System.Drawing.Size(472, 250);
+            this.groupBoxSnippetSettings.Size = new System.Drawing.Size(472, 173);
             this.groupBoxSnippetSettings.TabIndex = 3;
             this.groupBoxSnippetSettings.TabStop = false;
             this.groupBoxSnippetSettings.Text = "Snippet Settings";
@@ -437,13 +459,13 @@ namespace PowerPortalWebAPIHelper
             // 
             this.splitContainer3.Panel1.Controls.Add(this.lblOperationType);
             this.splitContainer3.Panel1.Controls.Add(this.chBxUseSelectedFields);
-            this.splitContainer3.Panel1.Controls.Add(this.lblOperationMessage);
             this.splitContainer3.Panel1.Controls.Add(this.cbBxOperationType);
             // 
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.grpBxAssociationEntity);
-            this.splitContainer3.Size = new System.Drawing.Size(466, 231);
+            this.splitContainer3.Panel2.Controls.Add(this.lblOperationMessage);
+            this.splitContainer3.Size = new System.Drawing.Size(466, 154);
             this.splitContainer3.SplitterDistance = 176;
             this.splitContainer3.SplitterWidth = 8;
             this.splitContainer3.TabIndex = 9;
@@ -467,12 +489,15 @@ namespace PowerPortalWebAPIHelper
             this.chBxUseSelectedFields.TabIndex = 4;
             this.chBxUseSelectedFields.Text = "Include Selected Fields";
             this.chBxUseSelectedFields.UseVisualStyleBackColor = true;
+            this.chBxUseSelectedFields.CheckedChanged += new System.EventHandler(this.chBxUseSelectedFields_CheckedChanged);
             // 
             // lblOperationMessage
             // 
-            this.lblOperationMessage.Location = new System.Drawing.Point(3, 97);
+            this.lblOperationMessage.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblOperationMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOperationMessage.Location = new System.Drawing.Point(0, 0);
             this.lblOperationMessage.Name = "lblOperationMessage";
-            this.lblOperationMessage.Size = new System.Drawing.Size(167, 113);
+            this.lblOperationMessage.Size = new System.Drawing.Size(282, 113);
             this.lblOperationMessage.TabIndex = 8;
             this.lblOperationMessage.Text = resources.GetString("lblOperationMessage.Text");
             // 
@@ -489,10 +514,10 @@ namespace PowerPortalWebAPIHelper
             // 
             this.grpBxAssociationEntity.Controls.Add(this.lblAssociateWith);
             this.grpBxAssociationEntity.Controls.Add(this.cbBxAssociateWith);
-            this.grpBxAssociationEntity.Dock = System.Windows.Forms.DockStyle.Top;
-            this.grpBxAssociationEntity.Location = new System.Drawing.Point(0, 0);
+            this.grpBxAssociationEntity.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.grpBxAssociationEntity.Location = new System.Drawing.Point(0, 111);
             this.grpBxAssociationEntity.Name = "grpBxAssociationEntity";
-            this.grpBxAssociationEntity.Size = new System.Drawing.Size(282, 89);
+            this.grpBxAssociationEntity.Size = new System.Drawing.Size(282, 43);
             this.grpBxAssociationEntity.TabIndex = 7;
             this.grpBxAssociationEntity.TabStop = false;
             this.grpBxAssociationEntity.Text = "Association Entity Settings";
@@ -542,28 +567,6 @@ namespace PowerPortalWebAPIHelper
             this.tabWrapperFunction.Text = "Wrapper Function";
             this.tabWrapperFunction.UseVisualStyleBackColor = true;
             // 
-            // btnCreateEntityPermission
-            // 
-            this.btnCreateEntityPermission.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnCreateEntityPermission.Location = new System.Drawing.Point(0, 85);
-            this.btnCreateEntityPermission.Name = "btnCreateEntityPermission";
-            this.btnCreateEntityPermission.Size = new System.Drawing.Size(249, 23);
-            this.btnCreateEntityPermission.TabIndex = 8;
-            this.btnCreateEntityPermission.Text = "Create one now?";
-            this.btnCreateEntityPermission.UseVisualStyleBackColor = true;
-            this.btnCreateEntityPermission.Visible = false;
-            this.btnCreateEntityPermission.Click += new System.EventHandler(this.btnCreateEntityPermission_Click);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.btnCreateEntityPermission);
-            this.panel1.Controls.Add(this.lblEntityPermissionsNotification);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(168, 16);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(249, 108);
-            this.panel1.TabIndex = 7;
-            // 
             // rchTxtBoxOperation
             // 
             this.rchTxtBoxOperation.ContextMenuStrip = this.snippetsContextMenu;
@@ -571,7 +574,7 @@ namespace PowerPortalWebAPIHelper
             this.rchTxtBoxOperation.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rchTxtBoxOperation.Location = new System.Drawing.Point(0, 0);
             this.rchTxtBoxOperation.Name = "rchTxtBoxOperation";
-            this.rchTxtBoxOperation.Size = new System.Drawing.Size(472, 225);
+            this.rchTxtBoxOperation.Size = new System.Drawing.Size(472, 302);
             this.rchTxtBoxOperation.TabIndex = 1;
             this.rchTxtBoxOperation.Text = "";
             // 
@@ -614,6 +617,7 @@ namespace PowerPortalWebAPIHelper
             this.grpBxEntityAttributes.ResumeLayout(false);
             this.grpBoxEntityInformation.ResumeLayout(false);
             this.grpBoxEntityInformation.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.tabControlSnippets.ResumeLayout(false);
             this.tabOperation.ResumeLayout(false);
@@ -631,7 +635,6 @@ namespace PowerPortalWebAPIHelper
             this.grpBxAssociationEntity.PerformLayout();
             this.snippetsContextMenu.ResumeLayout(false);
             this.tabWrapperFunction.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

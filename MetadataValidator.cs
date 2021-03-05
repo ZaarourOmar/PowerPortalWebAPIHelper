@@ -11,12 +11,18 @@ namespace PowerPortalWebAPIHelper
         // an attribute is valid if it has a display name 
         public static bool IsValidAttribute(AttributeMetadata attributeMetadata)
         {
-            if(attributeMetadata.LogicalName== "address1_addressid")
+            bool isDeprecated = false;
+            foreach (var labelObject in attributeMetadata.DisplayName.LocalizedLabels)
             {
-
+                if (labelObject.Label.ToLower().Contains("deprecated"))
+                {
+                    isDeprecated = true;
+                    break;
+                }
             }
+
             // return attributeMetadata.DisplayName.LocalizedLabels.Count > 0;
-            return attributeMetadata.IsValidForCreate.Value || attributeMetadata.IsValidForUpdate.Value;
+            return !isDeprecated && (attributeMetadata.IsValidForCreate.Value || attributeMetadata.IsValidForUpdate.Value);
         }
 
         // Microsoft docs doesn't clearly state which entities are good candidates to be exposed to the portal through the web api. The only thing I could find is that data entity (like account and contacts etc) and custom entities are what the users can expose. This validation function tries to limit the entities shown to users based on the above assumption but I can't guarntee that this list is fully inclusive or exclusive until microsoft provides more details on the conditions around the valid entities.
@@ -30,8 +36,8 @@ namespace PowerPortalWebAPIHelper
             bool isAdxEntity = entityMetadata.LogicalName.StartsWith("adx");
             bool isBpFEntity = entityMetadata.IsBPFEntity.Value;
             bool isDataEntity = entityMetadata.CanBeInCustomEntityAssociation.Value == true && entityMetadata.IsCustomizable.Value == true &&
-                entityMetadata.IsImportable.Value == true && entityMetadata.CanTriggerWorkflow== true;
-            return !isConfigEntity && hasDisplayName && hasCollecitonName && !isMsDynEntity && isDataEntity && !isBpFEntity &&!isAdxEntity;
+                entityMetadata.IsImportable.Value == true && entityMetadata.CanTriggerWorkflow == true;
+            return !isConfigEntity && hasDisplayName && hasCollecitonName && !isMsDynEntity && isDataEntity && !isBpFEntity && !isAdxEntity;
         }
 
 

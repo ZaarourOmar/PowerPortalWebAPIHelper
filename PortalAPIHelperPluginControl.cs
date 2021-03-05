@@ -515,6 +515,10 @@ namespace PowerPortalWebAPIHelper
                 rchTxtBoxOperation.Text = snippet;
             }
         }
+        private void chBxUseSelectedFields_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateOrGenerateSnippets();
+        }
         #endregion
 
         #region Website Management
@@ -545,7 +549,8 @@ namespace PowerPortalWebAPIHelper
                 Work = (worker, args) =>
                 {
                     QueryExpression websiteQuery = new QueryExpression("adx_website");
-                    websiteQuery.ColumnSet = new ColumnSet(new string[] { "adx_name", "adx_websiteid" });
+                    websiteQuery.ColumnSet = new ColumnSet(new string[] { "adx_name", "adx_websiteid","statecode" });
+                    websiteQuery.Criteria.AddCondition("statecode", ConditionOperator.Equal, 0);// only active websites
                     args.Result = Service.RetrieveMultiple(websiteQuery);
 
                 },
@@ -556,9 +561,11 @@ namespace PowerPortalWebAPIHelper
                         var entities = (args.Result as EntityCollection).Entities;
                         if (entities.Count == 0)
                         {
-                            MessageBox.Show("The target organization has no portal setup. Please setup a portal first then restart this tool.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(Constants.NO_PORTAL_WEBSITE_FOUND, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             CloseTool();
+                            return;
                         }
+                        tsbWebsiteList.Items.Clear();
                         foreach (Entity webSite in entities)
                         {
                             Guid websiteId = webSite.Id;
@@ -689,7 +696,7 @@ namespace PowerPortalWebAPIHelper
                     InitializeEnabledCheckBoxBasedOnSiteSetting(results.Item2);
                     InitializeAttributesBasedOnSiteSetting(results.Item3);
                     ToggleSelectedEntityToolbarComponents(true);
-                    CheckEntityPermissions(logicalName);
+                    CheckEntityPermissions(logicalName,Model.SelectedWebSiteId);
                     ShowEntityInformationPanel();
                     // populate the operation type combobox
                     InitializeOperationTypes();
@@ -785,7 +792,7 @@ namespace PowerPortalWebAPIHelper
         #endregion
 
         #region Entity Permissions
-        private void CheckEntityPermissions(string entityLogicalName)
+        private void CheckEntityPermissions(string entityLogicalName,Guid websiteId)
         {
             WorkAsync(new WorkAsyncInfo
             {
@@ -795,8 +802,9 @@ namespace PowerPortalWebAPIHelper
 
                     // Get sitesettings for this entity that are related to the web api setup
                     QueryExpression entityPermissionsQuery = new QueryExpression("adx_entitypermission");
-                    entityPermissionsQuery.ColumnSet = new ColumnSet(new string[] { "adx_entitypermissionid", "adx_entitylogicalname" });
+                    entityPermissionsQuery.ColumnSet = new ColumnSet(new string[] { "adx_entitypermissionid", "adx_entitylogicalname","adx_websiteid" });
                     entityPermissionsQuery.Criteria.AddCondition("adx_entitylogicalname", ConditionOperator.Equal, entityLogicalName);
+                    entityPermissionsQuery.Criteria.AddCondition("adx_websiteid", ConditionOperator.Equal, websiteId);
                     var entityPermissionsResult = Service.RetrieveMultiple(entityPermissionsQuery);
                     args.Result = entityPermissionsResult.Entities.Count;
 
@@ -825,7 +833,7 @@ namespace PowerPortalWebAPIHelper
                 }
             });
         }
-        #endregion
+
 
         private void btnCreateEntityPermission_Click(object sender, EventArgs e)
         {
@@ -908,6 +916,9 @@ namespace PowerPortalWebAPIHelper
                 });
             }
         }
+        #endregion
+
+       
     }
 
 }
