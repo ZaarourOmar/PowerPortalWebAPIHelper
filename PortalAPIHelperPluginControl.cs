@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk.Query;
 using PowerPortalWebAPIHelper.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -46,6 +47,9 @@ namespace PowerPortalWebAPIHelper
             {
                 LogInfo("Settings found and loaded");
             }
+
+            txtAllEntitiesFilter.Init(Constants.ENTITY_FILTER_HINT);
+
 
         }
         private void tsbClose_Click(object sender, EventArgs e)
@@ -89,8 +93,10 @@ namespace PowerPortalWebAPIHelper
         {
             //clear previous lists
             Model?.ClearEntities();
-            lstBxAllEntities.Items.Clear();
+            lstBxAllEntities.DataSource = Model.AllEntitiesList;
+            //lstBxAllEntities.Items.Clear();
             txtAllEntitiesFilter.Text = "";
+
             // load entity list
             WorkAsync(new WorkAsyncInfo
             {
@@ -116,15 +122,17 @@ namespace PowerPortalWebAPIHelper
                     var entityMetaDataArray = args.Result as EntityMetadata[];
                     if (entityMetaDataArray != null)
                     {
+                        lstBxAllEntities.SelectedIndexChanged -= AllEntitiesListBox_SelectedIndexChanged;
                         foreach (EntityMetadata entityMetadata in entityMetaDataArray)
                         {
                             if (!MetadataValidator.IsValidEntity(entityMetadata)) continue;
 
                             EntityItemModel entityItemModel = new EntityItemModel(entityMetadata);
                             Model.AddEntity(entityItemModel);
-                            lstBxAllEntities.Items.Add(entityItemModel);
+                            //lstBxAllEntities.Items.Add(entityItemModel);
                         }
-
+                        lstBxAllEntities.SelectedIndexChanged += AllEntitiesListBox_SelectedIndexChanged;
+                        lstBxAllEntities.SelectedItem = null;
                         ToggleWebsiteToolbarComponents(true);
                         entitiesSplitContainer.Visible = true;
                     }
@@ -147,6 +155,7 @@ namespace PowerPortalWebAPIHelper
         {
             EntityInformationSplitContainer.Visible = true;
             tsbSwitchInnerError.Visible = true;
+            grpBoxEntityInformation.Text = Model?.SelectedEntityInfo?.DisplayName + " Entity Information";
         }
         private void InitializeEnabledCheckBoxBasedOnSiteSetting(Entity enabledSiteSettingEntity)
         {
@@ -246,21 +255,28 @@ namespace PowerPortalWebAPIHelper
             string txt = txtAllEntitiesFilter.Text;
             if (txt == Constants.ENTITY_FILTER_HINT) return;
 
+            lstBxAllEntities.SelectedIndexChanged -= AllEntitiesListBox_SelectedIndexChanged;
 
-            var itemList = Model.AllEntitiesList;
-            if (itemList.Count > 0)
+            var allEntities = Model.AllEntitiesList;
+            var filteredEntities = Model.AllEntitiesList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToList();
+            if (!string.IsNullOrEmpty(txt))
             {
                 //clear the items from the list
-                lstBxAllEntities.Items.Clear();
-
+                //lstBxAllEntities.Items.Clear();
+                lstBxAllEntities.DataSource = filteredEntities;
                 //filter the items and add them to the list
-                lstBxAllEntities.Items.AddRange(
-                    itemList.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
+                //lstBxAllEntities.Items.AddRange(
+                //    allEntities.Where(i => i.DisplayName.ToLower().Contains(txt.ToLower())).ToArray());
             }
             else
             {
-                lstBxAllEntities.Items.AddRange(itemList.ToArray());
+                lstBxAllEntities.DataSource = allEntities;
+
+                //lstBxAllEntities.Items.AddRange(allEntities.ToArray());
             }
+
+            lstBxAllEntities.SelectedIndexChanged += AllEntitiesListBox_SelectedIndexChanged;
+
         }
         private void LoadAllEntities_Click(object sender, EventArgs e)
         {
@@ -281,7 +297,6 @@ namespace PowerPortalWebAPIHelper
             {
                 ExecuteMethod(LoadSelectedEntityAttributes, Model.SelectedEntityLogicalName);
                 //ShowEntityInformationPanel();
-                txtAllEntitiesFilter.Init(Constants.ENTITY_FILTER_HINT);
                 // find possible associations for snippet generation
                 foreach (var mToMRelationsip in Model.SelectedEntityMtoMRelationships)
                 {
@@ -444,7 +459,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void chkBxSelectAllAttributes_CheckedChanged(object sender, EventArgs e)
         {
-            
+
             if (Model.ForceAllAttributeCheck)
             {
                 for (int i = 0; i < chkdLstBxAllAttibutes.Items.Count; i++)
@@ -806,7 +821,7 @@ namespace PowerPortalWebAPIHelper
 
                     // Get sitesettings for this entity that are related to the web api setup
                     QueryExpression entityPermissionsQuery = new QueryExpression("adx_entitypermission");
-                    entityPermissionsQuery.ColumnSet = new ColumnSet(new string[]{ "adx_entitypermissionid", "adx_entitylogicalname" });
+                    entityPermissionsQuery.ColumnSet = new ColumnSet(new string[] { "adx_entitypermissionid", "adx_entitylogicalname" });
                     entityPermissionsQuery.Criteria.AddCondition("adx_entitylogicalname", ConditionOperator.Equal, entityLogicalName);
                     var entityPermissionsResult = Service.RetrieveMultiple(entityPermissionsQuery);
                     args.Result = entityPermissionsResult.Entities.Count;
@@ -823,18 +838,105 @@ namespace PowerPortalWebAPIHelper
                     if (entitPermissionCount == 0)
                     {
                         lblEntityPermissionsNotification.ForeColor = Color.Red;
-                        lblEntityPermissionsNotification.Text = "The selected entity has no related entity permissions. Make sure to add the proper entity permission for the web api calls to work.";
+                        lblEntityPermissionsNotification.Text = Constants.ENTITY_HAS_NO_ENTITYPERMISSION; ;
+                        btnCreateEntityPermission.Visible = true;
                     }
                     else
                     {
                         lblEntityPermissionsNotification.ForeColor = Color.Green;
-                        lblEntityPermissionsNotification.Text = "An entity permission is found for the selected entity. Make sure that the entity permission allows the required Web API operation";
+                        lblEntityPermissionsNotification.Text = Constants.ENTITY_HAS_ENTITYPERMISSION; ;
+                        btnCreateEntityPermission.Visible = false;
                     }
 
                 }
             });
         }
         #endregion
+
+        private void btnCreateEntityPermission_Click(object sender, EventArgs e)
+        {
+
+            if(Model==null || Model.SelectedEntityInfo==null || Model.SelectedWebsiteInfo == null)
+            {
+                MessageBox.Show(Constants.UNABLE_TO_CREATE_ENTITY_PERMISSION, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (MessageBox.Show(Constants.CREATE_ENTITY_PERMISSION_DIALOG, "Information", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+            {
+
+                WorkAsync(new WorkAsyncInfo
+                {
+                    Message = "Creating a global entity permission for the administrator webrole",
+                    Work = (worker, args) =>
+                    {
+
+                        QueryExpression webRolesQuery = new QueryExpression("adx_webrole");
+                        FilterExpression authenticatedUserWebRoleFilter = webRolesQuery.Criteria.AddFilter(LogicalOperator.Or);
+                        authenticatedUserWebRoleFilter.AddCondition("adx_name", ConditionOperator.Equal, Constants.WEBROLE_ADMIN_NAME);
+                        authenticatedUserWebRoleFilter.AddCondition("adx_webroleid", ConditionOperator.Equal, Constants.WEBROLE_ADMIN_ID);
+                        webRolesQuery.Criteria.AddFilter(authenticatedUserWebRoleFilter);
+                        webRolesQuery.Criteria.AddCondition("statecode", ConditionOperator.Equal,0); // only active webroles
+
+                        var webRolesResult = Service.RetrieveMultiple(webRolesQuery);
+                        Guid webRoleId = Guid.Empty;
+                        if (webRolesResult.Entities != null && webRolesResult.Entities.Count > 0)
+                        {
+                            // normally, the web role will have the same id in all microsoft portal, but this is just to confirm that no one created a custom role with the same name but different id
+                            webRoleId = webRolesResult.Entities[0].Id;
+                        }
+                        else
+                        {
+                            MessageBox.Show(Constants.WEBROLE_ADMIN_NOTFOUND,"Warning",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                        }
+
+                        string entityPermissionEntityName = "adx_entitypermission";
+                        string entityName = Model.SelectedEntityLogicalName;
+                        string entityDisplayName = Model.SelectedEntityDisplayName;
+                        Guid websiteId = Model.SelectedWebSiteId;
+                        int scope = 756150000; // this is the global scope
+
+                        Entity newEntityPermission = new Entity(entityPermissionEntityName);
+                        newEntityPermission.Attributes.Add("adx_entityname", "Auto Generated Global Entity Permission for " + entityDisplayName);
+                        newEntityPermission.Attributes.Add("adx_entitylogicalname", entityName);
+                        newEntityPermission.Attributes.Add("adx_websiteid", new EntityReference("adx_website", websiteId));
+                        newEntityPermission.Attributes.Add("adx_read", true);
+                        newEntityPermission.Attributes.Add("adx_write", true);
+                        newEntityPermission.Attributes.Add("adx_create", true);
+                        newEntityPermission.Attributes.Add("adx_delete", true);
+                        newEntityPermission.Attributes.Add("adx_append", true);
+                        newEntityPermission.Attributes.Add("adx_appendto", true);
+                        newEntityPermission.Attributes.Add("adx_scope", new OptionSetValue(scope));
+                        newEntityPermission.Attributes.Add("statecode", 0);// only active permisions
+
+                        Guid recordId = Service.Create(newEntityPermission);
+                        if (recordId != Guid.Empty && webRoleId!=Guid.Empty)
+                        {
+                            AssociateRequest associateRequest = new AssociateRequest();
+                            associateRequest.Relationship = new Relationship("adx_entitypermission_webrole");
+                            associateRequest.RelatedEntities = new EntityReferenceCollection();
+                            associateRequest.RelatedEntities.Add(new EntityReference("adx_webrole", webRoleId));
+                            associateRequest.Target = new EntityReference("adx_entitypermission", recordId);
+                            Service.Execute(associateRequest);
+                        }
+
+                    },
+                    PostWorkCallBack = (args) =>
+                    {
+                        if (args.Error != null)
+                        {
+                            MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        lblEntityPermissionsNotification.ForeColor = Color.Green;
+                        lblEntityPermissionsNotification.Text = Constants.ENTITY_PERMISSION_CREATED; ;
+                        btnCreateEntityPermission.Visible = false;
+
+                    }
+                });
+
+
+            }
+        }
     }
 
 }

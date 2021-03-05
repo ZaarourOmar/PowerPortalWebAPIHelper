@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace PowerPortalWebAPIHelper.Models
         public List<WebsiteModel> Websites { get; private set; } = new List<WebsiteModel>();
         // a flag to control the select all atribute checkbox
         public bool ForceAllAttributeCheck = false;
-        public List<EntityItemModel> AllEntitiesList { get; private set; } = new List<EntityItemModel>();
+        public BindingList<EntityItemModel> AllEntitiesList { get; private set; } = new BindingList<EntityItemModel>();
         public WebsiteModel SelectedWebsiteInfo { get; private set; } = new WebsiteModel();
         public Guid WebAPIEnabledSiteSettingId
         {
@@ -56,6 +57,15 @@ namespace PowerPortalWebAPIHelper.Models
             set
             {
                 SelectedEntityInfo.LogicalName = value;
+            }
+        }
+
+        public string SelectedEntityDisplayName
+        {
+            get { return SelectedEntityInfo.DisplayName; }
+            set
+            {
+                SelectedEntityInfo.DisplayName = value;
             }
         }
 

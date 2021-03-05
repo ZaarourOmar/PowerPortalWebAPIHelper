@@ -97,7 +97,7 @@ namespace PowerPortalWebAPIHelper
                         if (operationType == APIOperationTypes.BasicUpdate || operationType == APIOperationTypes.UpdateSingle)
                         {
                             var relatedEntityColelcitonName = attribute.RelatedEntityCollectionName;
-                            jsonBuilder.Append("\t\t\"" + attribute.WebAPIName + ".odata.bind\":portalurl+\"/_api/"+ relatedEntityColelcitonName + "(11111111-1111-1111-1111-111111111111)" + "\"");
+                            jsonBuilder.Append("\t\t\"" + attribute.WebAPIName + "@odata.bind\":portalurl+\"/_api/"+ relatedEntityColelcitonName + "(11111111-1111-1111-1111-111111111111)" + "\"");
                         }
                         else
                         {
@@ -155,11 +155,10 @@ namespace PowerPortalWebAPIHelper
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
             snippetTextBuilder.AppendLine("// This is a sample delete snippet to delete a single property using the DELETE operator. Use this when you want to clear out a single property value and not the whole record. You need to specify the ID of the record between the brackets and the logical name of the propery");
-            string sampleAttribute = addFields && selectedAttributes.Count > 0 ? selectedAttributes[0].WebAPIName : "attribute_logical_name";
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)/" + sampleAttribute + "\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)/ATTRIBUTE_NAME_HERE\",");
             snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
             snippetTextBuilder.AppendLine("\tsuccess: function(res) {");
             snippetTextBuilder.AppendLine("\t\tconsole.log(res)");
@@ -219,12 +218,11 @@ namespace PowerPortalWebAPIHelper
         private static string GenerateUpdateSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes,bool addFields)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-            string sampleAttribute = addFields && selectedAttributes.Count > 0 ? selectedAttributes[0].WebAPIName:"attribute_logical_name";
-            snippetTextBuilder.AppendLine("// This is a sample single field update snippet using the PUT operator. You need to specify the ID of the record being updated, the logical name of the attribute and the value of the targeted attribute. As an example, the first selected attribute is added for you. ");
+            snippetTextBuilder.AppendLine("// This is a sample single field update snippet using the PUT operator. You need to specify the ID of the record being updated, the logical name of the attribute and the value of the targeted attribute.");
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"PUT\",");
-            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)/" + sampleAttribute + "\",");
+            snippetTextBuilder.AppendLine("\turl: \"/_api/" + selectedEntityInfo.CollectionName + "(00000000-0000-0000-0000-000000000000)/ATTRIBUTE_NAME_HERE\",");
             snippetTextBuilder.AppendLine("\tcontentType:\"application/json\",");
             snippetTextBuilder.AppendLine("\tdata: JSON.stringify({");
             snippetTextBuilder.AppendLine("\t\t\"value\":\"NEW VALUE HERE\"");

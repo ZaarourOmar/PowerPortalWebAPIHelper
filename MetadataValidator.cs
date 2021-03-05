@@ -27,10 +27,11 @@ namespace PowerPortalWebAPIHelper
             bool hasDisplayName = entityMetadata.DisplayName.LocalizedLabels.Count > 0;
             bool hasCollecitonName = !string.IsNullOrEmpty(entityMetadata.LogicalCollectionName);
             bool isMsDynEntity = entityMetadata.LogicalName.StartsWith("msdyn");
+            bool isAdxEntity = entityMetadata.LogicalName.StartsWith("adx");
             bool isBpFEntity = entityMetadata.IsBPFEntity.Value;
             bool isDataEntity = entityMetadata.CanBeInCustomEntityAssociation.Value == true && entityMetadata.IsCustomizable.Value == true &&
                 entityMetadata.IsImportable.Value == true && entityMetadata.CanTriggerWorkflow== true;
-            return !isConfigEntity && hasDisplayName && hasCollecitonName && !isMsDynEntity && isDataEntity && !isBpFEntity;
+            return !isConfigEntity && hasDisplayName && hasCollecitonName && !isMsDynEntity && isDataEntity && !isBpFEntity &&!isAdxEntity;
         }
 
 
