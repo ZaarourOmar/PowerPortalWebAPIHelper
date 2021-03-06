@@ -18,7 +18,7 @@ namespace PowerPortalWebAPIHelper
         public static string GenerateWrapperFunction()
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-            snippetTextBuilder.AppendLine("//This is the wrapper ajax snippet to execute the API calls. Make sure that this piece of code is loaded before you call the APIs. You can paste this wrapper in the page html content (in a script tag) or you can store it in a webfile and expose it in the header or footer web templates.  depending on your use case.");
+            snippetTextBuilder.AppendLine("/*This is the wrapper ajax snippet to execute the API calls. Make sure that this piece of code is loaded before you call the APIs. You can paste this wrapper in the page html content (in a script tag) or you can store it in a webfile and expose it in the header or footer web templates.  depending on your use case.*/");
             snippetTextBuilder.AppendLine();
             snippetTextBuilder.AppendLine("(function(webapi, $){");
             snippetTextBuilder.AppendLine("\tfunction safeAjax(ajaxOptions) {");
@@ -39,7 +39,7 @@ namespace PowerPortalWebAPIHelper
             snippetTextBuilder.AppendLine("\t\t\t\t\tvalidateLoginSession(data, textStatus, jqXHR, deferredAjax.resolve);");
             snippetTextBuilder.AppendLine("\t\t\t\t}).fail(deferredAjax.reject); //AJAX");
             snippetTextBuilder.AppendLine("\t\t}).fail(function () {");
-            snippetTextBuilder.AppendLine("\t\t\tdeferredAjax.rejectWith(this, arguments); // on token failure pass the token AJAX and args");
+            snippetTextBuilder.AppendLine("\t\t\tdeferredAjax.rejectWith(this, arguments); /*on token failure pass the token AJAX and args*/");
             snippetTextBuilder.AppendLine("\t\t});");
             snippetTextBuilder.AppendLine("\t\treturn deferredAjax.promise();");
             snippetTextBuilder.AppendLine("\t}");
@@ -103,7 +103,7 @@ namespace PowerPortalWebAPIHelper
                         {
                             jsonBuilder.AppendLine("\t\t\"" + attribute.WebAPIName + "\":");
                             jsonBuilder.AppendLine("\t\t{");
-                            jsonBuilder.AppendLine("\t\t\t //Add related entity fields. Make sure to add the required fields for the related entity. Also, make sure that the related entity is enabled for Web API and has proper entity permissions");
+                            jsonBuilder.AppendLine("\t\t\t /*Add related entity fields. Make sure to add the required fields for the related entity. Also, make sure that the related entity is enabled for Web API and has proper entity permissions. To learn more about deep insert, take a look at https://docs.microsoft.com/en-us/powerapps/developer/data-platform/webapi/create-entity-web-api#create-related-entity-records-in-one-operation */");
                             jsonBuilder.Append("\t\t}");
                         }
                        
@@ -154,7 +154,7 @@ namespace PowerPortalWebAPIHelper
         private static string GenerateDeleteSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes,bool addFields)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-            snippetTextBuilder.AppendLine("// This is a sample delete snippet to delete a single property using the DELETE operator. Use this when you want to clear out a single property value and not the whole record. You need to specify the ID of the record between the brackets and the logical name of the propery");
+            snippetTextBuilder.AppendLine("/*This is a sample delete snippet to delete a single property using the DELETE operator. Use this when you want to clear out a single property value and not the whole record. You need to specify the ID of the record between the brackets and the logical name of the propery*/");
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
@@ -172,7 +172,7 @@ namespace PowerPortalWebAPIHelper
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
 
-            snippetTextBuilder.AppendLine("// This is a sample delete snippet using the DELETE operator. Use this when you want to delete a record. You need to specify the ID of the record between the brackets.");
+            snippetTextBuilder.AppendLine("/*This is a sample delete snippet using the DELETE operator. Use this when you want to delete a record. You need to specify the ID of the record between the brackets.*/");
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"DELETE\",");
@@ -190,7 +190,7 @@ namespace PowerPortalWebAPIHelper
         {
 
             StringBuilder snippetTextBuilder = new StringBuilder();
-            snippetTextBuilder.AppendLine("// This is a sample basic update snippet using the PATCH operator. You need to specify the ID of the record being updated and the JSON data object for the fields you want to update.");
+            snippetTextBuilder.AppendLine("/*This is a sample basic update snippet using the PATCH operator. You need to specify the ID of the record being updated and the JSON data object for the fields you want to update.*/");
 
             string json = addFields ? GenerateJsonFromFields(selectedAttributes, APIOperationTypes.BasicUpdate) : "";
             StringBuilder jsonObject = new StringBuilder();
@@ -218,7 +218,7 @@ namespace PowerPortalWebAPIHelper
         private static string GenerateUpdateSingleSnippet(EntityItemModel selectedEntityInfo, List<WebAPIAttributeItemModel> selectedAttributes,bool addFields)
         {
             StringBuilder snippetTextBuilder = new StringBuilder();
-            snippetTextBuilder.AppendLine("// This is a sample single field update snippet using the PUT operator. You need to specify the ID of the record being updated, the logical name of the attribute and the value of the targeted attribute.");
+            snippetTextBuilder.AppendLine("/*This is a sample single field update snippet using the PUT operator. You need to specify the ID of the record being updated, the logical name of the attribute and the value of the targeted attribute.*/");
 
             snippetTextBuilder.AppendLine("webapi.safeAjax({");
             snippetTextBuilder.AppendLine("\ttype: \"PUT\",");
@@ -242,7 +242,7 @@ namespace PowerPortalWebAPIHelper
             StringBuilder jsonObject = new StringBuilder();
             StringBuilder snippetTextBuilder = new StringBuilder();
 
-            snippetTextBuilder.AppendLine("// This is a sample create snippet using the POST operator. Use this snippet inside your record creation logic. Replace or modify the data object properties per your needs. Make sure that these properies are enabled for web api.");
+            snippetTextBuilder.AppendLine("/*This is a sample create snippet using the POST operator. Use this snippet inside your record creation logic. Replace or modify the data object properties per your needs. Make sure that these properies are enabled for web api.*/");
 
 
             jsonObject.AppendLine("var dataObject={");

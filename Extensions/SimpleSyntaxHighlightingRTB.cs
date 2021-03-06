@@ -61,20 +61,25 @@ namespace PowerPortalWebAPIHelper.Extensions
                 }
             }
 
+            int offset = 0;
             foreach (string line in this.Lines)
             {
-                if (line.StartsWith("//"))
+                if (line.Contains("/*"))
                 {
-                    this.Select(this.Text.IndexOf(line), line.Length);
+                    int startIndex = line.IndexOf("/*");
+                    int endIndex = line.IndexOf("*/")+2; // 2 to account for the * and /
+                    int length = endIndex - startIndex;
+                    this.Select(startIndex + offset, length);
                     this.SelectionColor = Color.Green;
                     this.Select(this.TextLength, 0);
-
                 }
+                offset += line.Length+1; // 1 to account for the new line character
+
             }
 
-            
 
-          
+
+
         }
     }
 }
