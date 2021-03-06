@@ -65,7 +65,7 @@ namespace PowerPortalWebAPIHelper
                 {
 
                     case AttributeTypeCode.Boolean:
-                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + ":false");
+                        jsonBuilder.Append("\t\t\"" + attribute.LogicalName + "\":false");
                         break;
                     case AttributeTypeCode.Integer:
                     case AttributeTypeCode.BigInt:
