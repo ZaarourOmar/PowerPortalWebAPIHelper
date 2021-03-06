@@ -70,10 +70,10 @@ namespace PowerPortalWebAPIHelper
             this.lblAssociateWith = new System.Windows.Forms.Label();
             this.cbBxAssociateWith = new System.Windows.Forms.ComboBox();
             this.lblOperationMessage = new System.Windows.Forms.Label();
-            this.rchTxtBoxOperation = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.snippetsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.tabWrapperFunction = new System.Windows.Forms.TabPage();
+            this.rchTxtBoxOperation = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.rchTxtBxWrapperFunction = new PowerPortalWebAPIHelper.Extensions.SimpleSyntaxHighlightingRTB();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -529,7 +529,7 @@ namespace PowerPortalWebAPIHelper
             this.cbBxAssociateWith.FormattingEnabled = true;
             this.cbBxAssociateWith.Location = new System.Drawing.Point(83, 16);
             this.cbBxAssociateWith.Name = "cbBxAssociateWith";
-            this.cbBxAssociateWith.Size = new System.Drawing.Size(253, 21);
+            this.cbBxAssociateWith.Size = new System.Drawing.Size(193, 21);
             this.cbBxAssociateWith.TabIndex = 5;
             // 
             // lblOperationMessage
@@ -541,17 +541,6 @@ namespace PowerPortalWebAPIHelper
             this.lblOperationMessage.Size = new System.Drawing.Size(282, 113);
             this.lblOperationMessage.TabIndex = 8;
             this.lblOperationMessage.Text = resources.GetString("lblOperationMessage.Text");
-            // 
-            // rchTxtBoxOperation
-            // 
-            this.rchTxtBoxOperation.ContextMenuStrip = this.snippetsContextMenu;
-            this.rchTxtBoxOperation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rchTxtBoxOperation.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rchTxtBoxOperation.Location = new System.Drawing.Point(0, 0);
-            this.rchTxtBoxOperation.Name = "rchTxtBoxOperation";
-            this.rchTxtBoxOperation.Size = new System.Drawing.Size(472, 302);
-            this.rchTxtBoxOperation.TabIndex = 1;
-            this.rchTxtBoxOperation.Text = "";
             // 
             // snippetsContextMenu
             // 
@@ -578,6 +567,17 @@ namespace PowerPortalWebAPIHelper
             this.tabWrapperFunction.TabIndex = 0;
             this.tabWrapperFunction.Text = "Wrapper Function";
             this.tabWrapperFunction.UseVisualStyleBackColor = true;
+            // 
+            // rchTxtBoxOperation
+            // 
+            this.rchTxtBoxOperation.ContextMenuStrip = this.snippetsContextMenu;
+            this.rchTxtBoxOperation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rchTxtBoxOperation.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rchTxtBoxOperation.Location = new System.Drawing.Point(0, 0);
+            this.rchTxtBoxOperation.Name = "rchTxtBoxOperation";
+            this.rchTxtBoxOperation.Size = new System.Drawing.Size(472, 302);
+            this.rchTxtBoxOperation.TabIndex = 1;
+            this.rchTxtBoxOperation.Text = "";
             // 
             // rchTxtBxWrapperFunction
             // 
