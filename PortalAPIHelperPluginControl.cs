@@ -34,7 +34,7 @@ namespace PowerPortalWebAPIHelper
         }
         private void PortalAPIHelperPluginControl_Load(object sender, EventArgs e)
         {
-            ShowInfoNotification("Please report bugs or enhancments by clicking on Learn More.", new Uri("https://github.com/ZaarourOmar/PowerPortalWebAPIHelper"));
+            ShowInfoNotification("Please report bugs or enhancements by clicking on Learn More.", new Uri("https://github.com/ZaarourOmar/PowerPortalWebAPIHelper"));
 
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))
@@ -82,7 +82,7 @@ namespace PowerPortalWebAPIHelper
         private void tsbHowTo_Click(object sender, EventArgs e)
         {
             string howToHelpString = "";
-            howToHelpString = "This tool quickly enables/disables Portal WebAPI capability for entities and their attributes. Simpley ,select the entity you want to enable/disable and select all the attributes you wish to expose through the web api and hit save! In addition, simple Create/Update/Delete Javascript snippets can be generated using this tool along with the Ajax Wrapper that you need to execute those calls. For more detailed setup and usage info of the portal Web Api, please visit https://docs.microsoft.com/en-us/powerapps/maker/portals/web-api-overview.";
+            howToHelpString = "This tool quickly enables/disables Portal WebAPI capability for entities and their attributes. Simply select the entity you want to enable/disable and select all the attributes you wish to expose through the web api and hit save! In addition, simple Create/Update/Delete Javascript snippets can be generated using this tool, along with the Ajax Wrapper that you need to execute those calls. For more detailed setup and usage info of the portal Web Api, please visit https://docs.microsoft.com/powerapps/maker/portals/web-api-overview.";
             MessageBox.Show(howToHelpString, "How to", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
