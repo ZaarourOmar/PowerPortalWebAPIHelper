@@ -352,11 +352,13 @@ namespace PowerPortalWebAPIHelper
                     }
 
                     var allAttributeMetaData = args.Result as AttributeMetadata[];
+
+                    Model.SelectedEntityAttributes.Clear();
                     foreach (var attribute in allAttributeMetaData)
                     {
                         if (!MetadataValidator.IsValidAttribute(attribute))
                             continue;
-
+                        // Dealw ith customer field as two fields, more fields (like owner) need to be added as well to this logic
                         if (attribute.AttributeType == AttributeTypeCode.Customer)
                         {
                             WebAPIAttributeItemModel contactAttribute = new WebAPIAttributeItemModel(attribute, Model.SelectedEntityInfo, true, CustomerType.Contact);
@@ -791,12 +793,12 @@ namespace PowerPortalWebAPIHelper
         }
         #endregion
 
-        #region Entity Permissions
+        #region Table Permissions
         private void CheckEntityPermissions(string entityLogicalName,Guid websiteId)
         {
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Checking Entity Permissions",
+                Message = "Checking Table Permissions",
                 Work = (worker, args) =>
                 {
 
@@ -847,7 +849,7 @@ namespace PowerPortalWebAPIHelper
             {
                 WorkAsync(new WorkAsyncInfo
                 {
-                    Message = "Creating a global entity permission for the administrator webrole",
+                    Message = "Creating a global table permission for the administrator webrole",
                     Work = (worker, args) =>
                     {
 
@@ -877,7 +879,7 @@ namespace PowerPortalWebAPIHelper
                         int scope = 756150000; // this is the global scope
 
                         Entity newEntityPermission = new Entity(entityPermissionEntityName);
-                        newEntityPermission.Attributes.Add("adx_entityname", "Auto Generated Global Entity Permission for " + entityDisplayName);
+                        newEntityPermission.Attributes.Add("adx_entityname", "Auto Generated Global Table Permission for " + entityDisplayName);
                         newEntityPermission.Attributes.Add("adx_entitylogicalname", entityName);
                         newEntityPermission.Attributes.Add("adx_websiteid", new EntityReference("adx_website", websiteId));
                         newEntityPermission.Attributes.Add("adx_read", true);
